@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>歴史年号・真剣勝負 & 暗記カード</title>
+    <style>
+        :root {
+            --primary: #d32f2f;
+            --hp-fill: #4caf50;
+            --accent: #ff9800;
+            --panel-bg: rgba(0, 0, 0, 0.95);
+            --rank-s: #ffd700;
+            --rank-a: #ff4081;
+            --rank-b: #4caf50;
+            --rank-c: #2196f3;
+            --rank-d: #9e9e9e;
+        }
+
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Hiragino Mincho ProN', serif;
+            background-color: #000;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100dvh;
+            overflow: hidden;
+            color: #eee;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #main-wrapper {
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            background: linear-gradient(to bottom, #1a2a3a, #000);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 共通レイヤー */
+        .overlay-screen {
+            position: absolute;
+            inset: 0;
+            background: var(--panel-bg);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .select-btn {
+            background: #333;
+            color: white;
+            border: 2px solid #555;
+            padding: 18px 5px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .select-btn:active {
+            background: var(--primary);
+            border-color: #fff;
+        }
+
+        .full-width {
+            grid-column: span 2;
+            background: #442222;
+        }
+
+        .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .quit-btn {
+            background: #333;
+            border: 1px solid #666;
+            color: #ccc;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .quit-btn:active {
+            background: #666;
+            color: #fff;
+        }
+
+        /* バトルUI */
+        .status-bar {
+            flex: 0 0 65px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 15px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hp-container {
+            width: 40%;
+        }
+
+        .hp-bar {
+            height: 22px;
+            background: #222;
+            border: 2px solid #fff;
+            border-radius: 11px;
+            overflow: hidden;
+        }
+
+        .hp-fill {
+            height: 100%;
+            width: 100%;
+            background: var(--hp-fill);
+            transition: width 0.3s;
+        }
+
+        .label {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        #battle-stage {
+            flex: 0 0 100px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        #enemy-samurai {
+            width: 100px;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 5 Q40 5 35 15 L40 25 L30 35 Q20 55 30 95 L70 95 Q80 55 70 35 L60 25 L65 15 Q60 5 50 5 Z" fill="black"/></svg>') no-repeat bottom center;
+            background-size: contain;
+            animation: sway 4s ease-in-out infinite;
+        }
+
+        @keyframes sway {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        #slash {
+            position: absolute;
+            top: 40%;
+            left: 0;
+            width: 0%;
+            height: 8px;
+            background: #fff;
+            box-shadow: 0 0 20px 8px #fff;
+            transform: rotate(-15deg);
+            z-index: 10;
+        }
+
+        .slash-anim {
+            animation: slash-effect 0.4s ease-out forwards;
+        }
+
+        @keyframes slash-effect {
+            0% {
+                width: 0%;
+                opacity: 1;
+            }
+
+            100% {
+                width: 100%;
+                opacity: 0;
+            }
+        }
+
+        .ui-mid {
+            flex: 0 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            text-align: center;
+        }
+
+        #timer-gauge {
+            width: 100%;
+            height: 8px;
+            background: #222;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        #timer-fill {
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        #event-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 4px;
+            min-height: 3.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1rem, 4vw, 1.4rem);
+        }
+
+        #hint-text {
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-weight: bold;
+            height: 1.4rem;
+            margin-bottom: 5px;
+            opacity: 0;
+        }
+
+        #input-display {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 10px;
+            color: #fff;
+            height: 3.5rem;
+            border-bottom: 2px solid #444;
+            margin: 0 40px;
+        }
+
+        .keypad {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 15px;
+            background: #111;
+        }
+
+        .key {
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 0 #000;
+        }
+
+        .key:active {
+            transform: translateY(4px);
+            box-shadow: none;
+            background: #666;
+        }
+
+        .key.ok {
+            background: var(--primary);
+            font-size: 2rem;
+            box-shadow: 0 5px 0 #600;
+        }
+
+        .key.c {
+            background: #666;
+        }
+
+        /* フラッシュカードUI */
+        #fc-card {
+            width: 90%;
+            height: 50%;
+            background: #eee;
+            color: #333;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            cursor: pointer;
+            border: 5px solid #888;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #fc-year {
+            font-size: 5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        #fc-goro {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 2rem;
+        }
+
+        #fc-event {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1a2a3a;
+            text-align: center;
+        }
+
+        #fc-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ccc;
+            color: #333;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .fc-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            width: 90%;
+        }
+
+        .fc-btn {
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* 並び替えUI */
+        #sort-ui {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #222;
+        }
+
+        #sort-header {
+            padding: 10px;
+            background: #333;
+            text-align: center;
+            font-weight: bold;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* 修正箇所: スクロール対応 */
+        #sort-container {
+            flex: 1;
+            overflow-y: auto;
+            /* スクロール可能に */
+            padding: 20px 10px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+            /* 滑らかスクロール */
+        }
+
+        /* スクロールバー装飾 */
+        #sort-container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #sort-container::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        #sort-container::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 5px;
+            border: 1px solid #333;
+        }
+
+        #sort-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .sort-item {
+            background: #444;
+            color: #fff;
+            padding: 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+            border: 2px solid #555;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .sort-placeholder {
+            height: 60px;
+            margin-bottom: 8px;
+            border: 2px dashed #777;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .drag-clone {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            background: var(--primary);
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+            opacity: 0.9;
+            transform: scale(1.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #fff;
+            box-sizing: border-box;
+        }
+
+        .sort-item.invisible {
+            display: none;
+        }
+
+        .sort-item.correct {
+            border-color: #4caf50;
+            background: #1b5e20;
+        }
+
+        .sort-item.wrong {
+            border-color: #f44336;
+            background: #b71c1c;
+        }
+
+        /* 分析UI */
+        #analysis-ui {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background: #111;
+            padding: 20px;
+        }
+
+        .analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .era-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #222;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .era-name {
+            width: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .era-graph {
+            flex: 1;
+            margin: 0 15px;
+            height: 20px;
+            background: #444;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .era-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 1s;
+        }
+
+        .era-rank {
+            width: 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .rank-s {
+            color: var(--rank-s);
+        }
+
+        .rank-a {
+            color: var(--rank-a);
+        }
+
+        .rank-b {
+            color: var(--rank-b);
+        }
+
+        .rank-c {
+            color: var(--rank-c);
+        }
+
+        .rank-d {
+            color: var(--rank-d);
+        }
+
+        #data-transfer-area {
+            margin-top: 30px;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 60px;
+            background: #111;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 0.8rem;
+        }
+
+        .damage-flash {
+            animation: flash-red 0.3s;
+        }
+
+        @keyframes flash-red {
+            50% {
+                background: rgba(255, 0, 0, 0.6);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* コレクション画面 */
+        #collection-ui {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #111;
+            overflow: hidden;
+        }
+
+        #col-header {
+            padding: 10px;
+            background: #333;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #col-grid {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            /* 4 columns per user request */
+            gap: 4px;
+            align-content: start;
+        }
+
+        .col-card {
+            aspect-ratio: 2/3;
+            background: #333;
+            border: 2px solid #555;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 5px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s;
+        }
+
+        .col-card:active {
+            transform: scale(0.95);
+        }
+
+        /* Collection Card Rarities */
+        .col-card.r1 {
+            border-color: #8d6e63;
+            background: #d7ccc8;
+            color: #3e2723;
+        }
+
+        .col-card.r2 {
+            border-color: #78909c;
+            background: linear-gradient(135deg, #eceff1, #b0bec5);
+            color: #37474f;
+        }
+
+        .col-card.r3 {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, #fffde7, #ffd54f);
+            color: #333;
+            box-shadow: 0 0 10px #ffd700;
+        }
+
+        .col-card.r4 {
+            border-color: #e040fb;
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7, #ce93d8);
+            color: #333;
+            box-shadow: 0 0 15px #e040fb;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 5px #e040fb;
+            }
+
+            50% {
+                box-shadow: 0 0 15px #e040fb;
+            }
+
+            100% {
+                box-shadow: 0 0 5px #e040fb;
+            }
+        }
+
+        .col-card.locked {
+            opacity: 0.6;
+            filter: grayscale(100%);
+            background: #222;
+            border-color: #444;
+            color: #888;
+        }
+
+        .col-card.new::after {
+            content: "NEW";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f44336;
+            color: #fff;
+            font-size: 0.6rem;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+
+        .rarity-star {
+            font-size: 0.7rem;
+            letter-spacing: -2px;
+        }
+
+        .card-img {
+            width: 80%;
+            height: auto;
+        }
+
+        /* --- NEW CARD DESIGN CSS --- */
+        /* Common Variables */
+        :root {
+            --card-width: 320px;
+            --card-height: 480px;
+            --holo-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #a18cd1 40%, #fbc2eb 60%, #8fd3f4 80%, #ff9a9e 100%);
+            --holo-border: 8px;
+        }
+
+        /* Modal Background */
+        #card-modal {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Flip Container */
+        .flip-container {
+            perspective: 1000px;
+            width: var(--card-width);
+            height: var(--card-height);
+            margin: 0 auto;
+            cursor: pointer;
+        }
+
+        .flip-container.flipped .flipper {
+            transform: rotateY(180deg);
+        }
+
+        .flipper {
+            transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .front,
+        .back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* --- FRONT FACE (Holographic) --- */
+        .front {
+            z-index: 2;
+            transform: rotateY(0deg);
+            background: #222;
+            /* Fallback */
+            padding: var(--holo-border);
+            /* Creates the border space */
+            box-sizing: border-box;
+            background: linear-gradient(to bottom right,
+                    #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+            background-size: 400% 400%;
+            animation: holo-shine 10s ease infinite;
+        }
+
+        @keyframes holo-shine {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .front-inner {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid #000;
+        }
+
+        /* Background Sky/Sea for Ryoma (Dynamic later) */
+        .card-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 50%, #4FC3F7 50%, #0288D1 100%);
+            z-index: 0;
+        }
+
+        /* Character Image */
+        .card-char-img {
+            position: absolute;
+            bottom: 60px;
+            /* Above stats */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: auto;
+            max-height: 70%;
+            object-fit: contain;
+            z-index: 1;
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Top Header Area */
+        .card-top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            z-index: 10;
+            /* background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent); */
+        }
+
+        /* Group Icon (Top Left) */
+        .group-icon {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 50px;
+            height: 50px;
+            background: #0d47a1;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            /* Shape clip for "Shield" feel or just rounded */
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: bold;
+            padding-bottom: 5px;
+            z-index: 20;
+        }
+
+        .group-icon img {
+            width: 60%;
+            height: 60%;
+            filter: invert(1);
+        }
+
+        /* Name Plate */
+        .name-container {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 70%;
+        }
+
+        .card-subtitle {
+            font-size: 0.6rem;
+            color: #333;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
+            background: rgba(255, 255, 255, 0.8);
+            display: inline-block;
+            padding: 0 4px;
+            border-radius: 4px;
+            margin-bottom: 2px;
+        }
+
+        .card-main-name {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #000;
+            font-family: "Hiragino Mincho ProN", serif;
+            text-shadow: 2px 2px 0 #fff;
+            white-space: nowrap;
+        }
+
+        /* Rarity Star (Top Right) */
+        .rarity-badge-star {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+        }
+
+        .rarity-star-svg {
+            width: 100%;
+            height: 100%;
+            fill: #ffd700;
+            stroke: #d4af37;
+            stroke-width: 2;
+        }
+
+        .rarity-text {
+            position: absolute;
+            font-weight: 900;
+            color: #fff;
+            font-size: 1rem;
+            text-shadow: 1px 1px 0 #000;
+            transform: rotate(5deg);
+        }
+
+        /* Number Tag (Bottom Right of Image) */
+        .card-number {
+            position: absolute;
+            bottom: 95px;
+            /* Adjust based on description height */
+            right: 5px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            z-index: 5;
+        }
+
+        /* Bottom Stats & Desc Area */
+        .card-bottom-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 80%, transparent);
+            z-index: 10;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            background: #333;
+            border: 1px solid #777;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .stat-pill.str {
+            border-color: #ff5252;
+        }
+
+        .stat-pill.int {
+            border-color: #40c4ff;
+        }
+
+        .stat-pill.cha {
+            border-color: #e040fb;
+        }
+
+        .stat-icon {
+            margin-right: 4px;
+        }
+
+        .desc-box {
+            font-size: 0.75rem;
+            line-height: 1.3;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: justify;
+        }
+
+        /* --- BACK FACE (Paper) --- */
+        .back {
+            transform: rotateY(180deg);
+            z-index: 1;
+            background: #fdfbf7;
+            /* Paper Tone */
+            border: 8px solid #fdfbf7;
+            outline: 2px solid #d4af37;
+            /* Gold Outline */
+            outline-offset: -6px;
+            box-sizing: border-box;
+            color: #333;
+            font-family: "Hiragino Mincho ProN", serif;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+        }
+
+        /* Decorative Corners */
+        .back::before,
+        .back::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d4af37;
+            pointer-events: none;
+        }
+
+        .back::before {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .back::after {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .bk-header-modern {
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 5px;
+        }
+
+        .bk-name-large {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .bk-kana-small {
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .bk-life-row {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 5px;
+            font-feature-settings: "palt";
+        }
+
+        .bk-content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            /* Hide Scrollbar */
+            scrollbar-width: none;
+        }
+
+        .bk-content-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Timeline Flow */
+        .timeline-flow {
+            position: relative;
+            padding-left: 20px;
+            margin: 10px 0;
+            border-left: 3px solid #333;
+        }
+
+        .tl-item {
+            position: relative;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tl-year-badge {
+            background: #000;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.9rem;
+            margin-right: 8px;
+            margin-left: -32px;
+            /* Pull left over line */
+            z-index: 1;
+            border: 2px solid #fff;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .tl-event {
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .tl-arrow-down {
+            position: absolute;
+            left: -9px;
+            top: 25px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        /* Section Title */
+        .bk-section-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #555;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .bk-keywords-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            padding-left: 10px;
+        }
+
+        .bk-kw-item::before {
+            content: "•";
+            margin-right: 4px;
+        }
+
+        /* Mnemonic */
+        .mnemonic-container {
+            margin-top: 10px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            border: 1px dashed #2196f3;
+        }
+
+        .mne-icon {
+            width: 40px;
+            height: 40px;
+            background: #1565c0;
+            border-radius: 5px;
+            flex-shrink: 0;
+            margin-right: 10px;
+            display: flex;
+            /* flex-center fallback */
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><text x="25" y="70" font-size="60">😭</text></svg>');
+            background-size: cover;
+        }
+
+        .mne-content {
+            flex: 1;
+        }
+
+        .mne-label {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #1565c0;
+        }
+
+        .mne-text {
+            font-size: 0.9rem;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        /* Relationships */
+        .relations-container {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 5px;
+        }
+
+        .rel-node {
+            border: 1px solid #333;
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .rel-node.main {
+            background: #000;
+            color: #fff;
+        }
+
+        .rel-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .rel-label {
+            font-size: 0.6rem;
+            color: #555;
+        }
+
+        .rel-arrow-icon {
+            color: #feaa2b;
+            font-size: 1.2rem;
+            font-weight: bold;
+            line-height: 0.8;
+        }
+
+        .card-get-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff5722;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main-wrapper">
+        <div id="mode-screen" class="overlay-screen">
+            <h1 style="color:var(--accent);">修行の道を選べ</h1>
+            <div class="btn-grid" style="grid-template-columns: 1fr 1fr; height: auto;">
+                <button class="select-btn full-width" style="height:80px; font-size:1.4rem;"
+                    onclick="selectMode('battle')">⚔️ 侍バトル (実戦)</button>
+                <button class="select-btn" style="height:80px; font-size:1.2rem; background:#2e7d32;"
+                    onclick="selectMode('flash')">🎴 暗記カード</button>
+                <button class="select-btn" style="height:80px; font-size:1.2rem; background:#1565c0;"
+                    onclick="selectMode('sort')">📜 時代整列</button>
+                <button class="select-btn" style="height:80px; font-size:1.2rem; background:#6a1b9a;"
+                    onclick="selectMode('collection')">💎 お宝一覧</button>
+                <button class="select-btn full-width"
+                    style="height:60px; font-size:1.2rem; background:#424242; border-color:#9e9e9e;"
+                    onclick="selectMode('analysis')">📊 戦績分析 & データ移行</button>
+            </div>
+            <div style="margin-top:20px; font-size:0.8rem; color:#888;">進捗は自動保存されます</div>
+        </div>
+
+        <div id="era-screen" class="overlay-screen hidden">
+            <h2 id="era-title">時代を選択せよ</h2>
+            <div class="btn-grid">
+                <button class="select-btn full-width" onclick="selectEra('all')">全時代</button>
+                <button class="select-btn" onclick="selectEra('古代')">古代<br><span
+                        style="font-size:0.8rem">(弥生~平安)</span></button>
+                <button class="select-btn" onclick="selectEra('中世')">中世<br><span
+                        style="font-size:0.8rem">(鎌倉~室町)</span></button>
+                <button class="select-btn" onclick="selectEra('近世')">近世<br><span
+                        style="font-size:0.8rem">(安土桃山~江戸)</span></button>
+                <button class="select-btn" onclick="selectEra('近代')">近代<br><span
+                        style="font-size:0.8rem">(明治~戦前)</span></button>
+                <button class="select-btn full-width" onclick="selectEra('現代')">現代<br><span
+                        style="font-size:0.8rem">(戦後~令和)</span></button>
+            </div>
+            <button class="select-btn full-width" style="margin-top:20px; background:none; border:none;"
+                onclick="location.reload()">← 戻る</button>
+        </div>
+
+        <div id="diff-screen" class="overlay-screen hidden">
+            <h2>戦い方を選べ</h2>
+            <div class="btn-grid">
+                <button class="select-btn full-width" onclick="startBattle('normal')">通常実戦<br><span
+                        style="font-size:0.8rem">ランダムに出題</span></button>
+                <button class="select-btn full-width" onclick="startBattle('weak')"
+                    style="background:#5d4037; border-color:#d7ccc8;">
+                    苦手克服<br><span style="font-size:0.8rem">間違えた問題のみ</span>
+                    <div id="weak-badge" class="badge hidden">0</div>
+                </button>
+            </div>
+            <button class="select-btn full-width" style="margin-top:20px; background:none; border:none;"
+                onclick="location.reload()">← 戻る</button>
+        </div>
+
+        <div id="analysis-ui" class="overlay-screen hidden" style="align-items: stretch; text-align: left;">
+            <div class="analysis-header">
+                <h2 style="margin:0;">戦績分析</h2>
+                <button class="quit-btn" onclick="location.reload()">閉じる</button>
+            </div>
+            <div id="analysis-container">
+            </div>
+
+            <div id="data-transfer-area">
+                <h3>📲 データ移行 (別端末へ)</h3>
+                <p style="font-size:0.8rem; color:#aaa;">下のコードをコピーして、別の端末の「読み込み」に貼り付けると続きから遊べます。</p>
+                <textarea id="export-area" readonly onclick="this.select()"></textarea>
+                <div style="text-align:right; margin-bottom:10px;">
+                    <button class="quit-btn" onclick="copyData()">コードをコピー</button>
+                </div>
+                <hr style="border:0; border-top:1px solid #555;">
+                <p style="font-size:0.8rem; color:#aaa;">別端末のコードをここに貼り付けて読み込む</p>
+                <textarea id="import-area" placeholder="ここにコードを貼り付け"></textarea>
+                <button class="select-btn full-width" style="margin-top:10px; font-size:1rem;"
+                    onclick="importData()">データを読み込む</button>
+            </div>
+            <div style="height:50px;"></div>
+        </div>
+
+        <div id="game-ui" class="hidden" style="height:100%; display:flex; flex-direction:column;">
+            <div class="status-bar">
+                <div class="hp-container"><span class="label">自分</span>
+                    <div class="hp-bar">
+                        <div id="p-hp" class="hp-fill"></div>
+                    </div>
+                </div>
+                <button class="quit-btn" onclick="location.reload()">撤退</button>
+                <div class="hp-container"><span class="label" style="text-align:right">宿敵</span>
+                    <div class="hp-bar">
+                        <div id="e-hp" class="hp-fill"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="battle-stage">
+                <div id="slash"></div>
+                <div id="enemy-samurai"></div>
+            </div>
+            <div class="ui-mid">
+                <div id="timer-gauge">
+                    <div id="timer-fill"></div>
+                </div>
+                <div id="event-name">出陣</div>
+                <div id="hint-text">💡 ヒント</div>
+                <div id="input-display">____</div>
+            </div>
+            <div class="keypad">
+                <button class="key" onclick="tapNum(1)">1</button><button class="key"
+                    onclick="tapNum(2)">2</button><button class="key" onclick="tapNum(3)">3</button>
+                <button class="key" onclick="tapNum(4)">4</button><button class="key"
+                    onclick="tapNum(5)">5</button><button class="key" onclick="tapNum(6)">6</button>
+                <button class="key" onclick="tapNum(7)">7</button><button class="key"
+                    onclick="tapNum(8)">8</button><button class="key" onclick="tapNum(9)">9</button>
+                <button class="key c" onclick="tapClear()">C</button><button class="key"
+                    onclick="tapNum(0)">0</button><button class="key ok" onclick="tapOk()">斬</button>
+            </div>
+        </div>
+
+        <div id="flash-ui" class="overlay-screen hidden" style="background:#1a2a3a;">
+            <div id="fc-progress" style="margin-bottom:20px;">0 / 0</div>
+            <button id="fc-close-btn" onclick="location.reload()">×</button>
+            <div id="fc-card" onclick="nextFcStep()">
+                <p id="fc-year">----</p>
+                <p id="fc-goro" class="hidden">ゴロ</p>
+                <p id="fc-event" class="hidden">出来事</p>
+                <p id="fc-msg" style="font-size:0.8rem; color:#999; margin-top:30px;">タップで正解を見る</p>
+            </div>
+            <div id="fc-actions" class="fc-actions hidden">
+                <button class="fc-btn" style="background:#4caf50;" onclick="rateCard('memo')">覚えた</button>
+                <button class="fc-btn" style="background:#2196f3;" onclick="rateCard('normal')">普通</button>
+                <button class="fc-btn" style="background:#d32f2f;" onclick="rateCard('weak')">苦手</button>
+            </div>
+            <button class="select-btn" style="margin-top:30px;" onclick="location.reload()">修行を終える</button>
+        </div>
+
+        <div id="sort-ui" class="hidden">
+            <div id="sort-header">
+                <button class="quit-btn" onclick="location.reload()">中断</button>
+                <span style="font-size:0.9rem;">古き順に並べよ</span>
+                <button id="sort-check-btn" class="select-btn"
+                    style="padding:5px 15px; font-size:0.9rem; background:var(--primary);"
+                    onclick="checkSortOrder()">判定</button>
+            </div>
+            <div id="sort-container"></div>
+        </div>
+
+        <!-- コレクション画面 -->
+        <div id="collection-ui" class="hidden">
+            <div id="col-header">
+                <button class="quit-btn" onclick="location.reload()">戻る</button>
+                <span style="font-size:1.1rem;">お宝コレクション</span>
+                <span id="col-count" style="font-size:0.9rem; color:#aaa;">0/0</span>
+            </div>
+            <div id="col-grid"></div>
+        </div>
+
+        <!-- カード獲得/詳細モーダル -->
+        <div id="card-modal" class="hidden" onclick="closeCardModal()">
+            <div class="card-get-title hidden" id="card-get-title">お宝発見！</div>
+
+            <div id="card-view-node" class="card-frame">
+                <!-- ヘッダー -->
+                <div class="card-header">
+                    <span id="cv-type">HISTORY</span>
+                    <span id="cv-rarity-badge" class="card-rarity-badge">SSR</span>
+                </div>
+
+                <!-- 画像 -->
+                <div class="card-image-container">
+                    <img id="cv-img" src="" alt="Card Image">
+                </div>
+
+                <!-- 情報 -->
+                <div class="card-info">
+                    <div id="cv-title" class="card-title">称号</div>
+                    <div id="cv-name" class="card-name">名前</div>
+                    <div id="cv-desc" class="card-desc">説明文がここに入ります。</div>
+
+                    <!-- ステータス -->
+                    <div class="card-stats">
+                        <div class="stat-box">
+                            <span class="stat-label">つよさ</span>
+                            <span id="cv-str" class="stat-val s">--</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">かしこさ</span>
+                            <span id="cv-int" class="stat-val i">--</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">にんき</span>
+                            <span id="cv-cha" class="stat-val c">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p style="color:#fff; margin-top:20px; font-size:0.8rem; animation: pulse 2s infinite;">タップして閉じる</p>
+        </div>
+
+        <div id="result-screen" class="overlay-screen hidden">
+            <h1 id="res-title" style="font-size:3rem;"></h1>
+            <p id="res-msg" style="font-size:1.4rem;"></p>
+            <button class="key ok" style="padding: 20px 60px; height: auto;" onclick="location.reload()">最初に戻る</button>
+        </div>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="cards.js"></script>
+
+    <script>
+        const STORAGE_KEY = 'history_game_v1';
+        let userStats = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        // { "id": { w:誤答数, s:連続正解, f:フラッシュ評価(-1:覚, 1:苦) } }
+
+        // カード保存用 (v2移行も考慮しつつ、既存キーに追加または別キー管理)
+        const CARD_STORAGE_KEY = 'history_game_cards_v1';
+        let userCards = JSON.parse(localStorage.getItem(CARD_STORAGE_KEY)) || [];
+        // ["c001", "c002", ...] (IDのリスト)
+
+        function getStat(id) {
+            if (!userStats[id]) userStats[id] = { w: 0, s: 0, f: 0 };
+            return userStats[id];
+        }
+        function saveStat(id, isCorrect, type = 'battle') {
+            const s = getStat(id);
+            if (type === 'battle') {
+                if (isCorrect) s.s++; else { s.w++; s.s = 0; }
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userStats));
+        }
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        function playTone(type, freq, duration, vol = 0.1) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+        function playSound(type) {
+            switch (type) {
+                case 'key': playTone('sine', 800, 0.08, 0.1); break;
+                case 'slash': playTone('sawtooth', 600, 0.1, 0.15); setTimeout(() => playTone('square', 300, 0.2, 0.15), 50); break;
+                case 'damage': playTone('sawtooth', 100, 0.3, 0.3); playTone('square', 80, 0.3, 0.3); break;
+                case 'ok': playTone('sine', 1200, 0.1, 0.1); setTimeout(() => playTone('sine', 1800, 0.2, 0.1), 100); break;
+                case 'grab': playTone('triangle', 200, 0.1, 0.2); break;
+                case 'pop': playTone('sine', 600, 0.05, 0.05); break;
+            }
+        }
+
+        let mode = '', selectedEra = '', playerHp = 100, enemyHp = 100;
+        let currentIdx = 0, quizList = [], userInput = "", timerInterval, fcStep = 0;
+
+        window.onload = function () {
+            if (typeof masterData === 'undefined') { alert('エラー: questions.js がありません'); return; }
+            masterData.forEach((d, i) => d.id = i);
+        };
+
+        function selectMode(m) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            playSound('ok'); mode = m;
+            document.getElementById('mode-screen').classList.add('hidden');
+            if (mode === 'sort') startSortGame();
+            else if (mode === 'analysis') showAnalysis();
+            else if (mode === 'collection') showCollection();
+            else document.getElementById('era-screen').classList.remove('hidden');
+        }
+
+        function selectEra(era) {
+            playSound('ok'); selectedEra = era;
+            document.getElementById('era-screen').classList.add('hidden');
+            if (mode === 'battle') {
+                const weakCount = masterData.filter(q => (era === 'all' || q.era === era) && getStat(q.id).w > 0 && getStat(q.id).s < 3).length;
+                const badge = document.getElementById('weak-badge');
+                badge.innerText = weakCount;
+                if (weakCount > 0) badge.classList.remove('hidden'); else badge.classList.add('hidden');
+                document.getElementById('diff-screen').classList.remove('hidden');
+            } else { startFlash(); }
+        }
+
+        // --- 分析 & データ移行 ---
+        function showAnalysis() {
+            document.getElementById('analysis-ui').classList.remove('hidden');
+            const container = document.getElementById('analysis-container');
+            container.innerHTML = "";
+
+            // データコード生成
+            const exportStr = btoa(unescape(encodeURIComponent(JSON.stringify(userStats))));
+            document.getElementById('export-area').value = exportStr;
+
+            // グラフ生成
+            const eras = ['古代', '中世', '近世', '近代', '現代'];
+            eras.forEach(era => {
+                const eraQs = masterData.filter(q => q.era === era);
+                if (eraQs.length === 0) return;
+
+                // スコア計算 (正解継続で加点、苦手で減点)
+                let totalScore = 0;
+                eraQs.forEach(q => {
+                    const s = getStat(q.id);
+                    let qScore = 50; // 基礎点
+                    if (s.f === -1) qScore += 30; // 覚えた
+                    if (s.s >= 3) qScore += 20;   // 3連続正解
+                    if (s.f === 1) qScore -= 30;  // 苦手
+                    if (s.w > 0) qScore -= Math.min(40, s.w * 10); // 誤答数ペナルティ
+                    totalScore += Math.max(0, Math.min(100, qScore));
+                });
+                const avg = Math.round(totalScore / eraQs.length);
+
+                // ランク判定
+                let rank = 'D', color = 'var(--rank-d)';
+                if (avg >= 90) { rank = 'S'; color = 'var(--rank-s)'; }
+                else if (avg >= 75) { rank = 'A'; color = 'var(--rank-a)'; }
+                else if (avg >= 60) { rank = 'B'; color = 'var(--rank-b)'; }
+                else if (avg >= 40) { rank = 'C'; color = 'var(--rank-c)'; }
+
+                const html = `
+            <div class="era-row">
+                <div class="era-name">${era}</div>
+                <div class="era-graph"><div class="era-bar" style="width:${avg}%; background:${color};"></div></div>
+                <div class="era-rank" style="color:${color};">${rank}</div>
+            </div>`;
+                container.innerHTML += html;
+            });
+
+            // アニメーション用
+            setTimeout(() => {
+                document.querySelectorAll('.era-bar').forEach(el => {
+                    const w = el.style.width;
+                    el.style.width = '0%';
+                    setTimeout(() => el.style.width = w, 50);
+                });
+            }, 100);
+        }
+
+        function copyData() {
+            const copyText = document.getElementById("export-area");
+            copyText.select();
+            document.execCommand("copy");
+            alert("コードをコピーしました！別の端末で読み込んでください。");
+        }
+
+        function importData() {
+            const input = document.getElementById("import-area").value;
+            try {
+                const json = decodeURIComponent(escape(atob(input)));
+                const parsed = JSON.parse(json);
+                if (confirm("現在のデータを上書きして読み込みますか？")) {
+                    userStats = parsed;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(userStats));
+                    alert("データの読み込みに成功しました！");
+                    location.reload();
+                }
+            } catch (e) {
+                alert("コードが正しくありません。");
+            }
+        }
+
+        // --- バトル ---
+        function startBattle(type) {
+            playSound('ok');
+            document.getElementById('diff-screen').classList.add('hidden');
+            document.getElementById('game-ui').classList.remove('hidden');
+
+            let baseList = masterData.filter(q => (selectedEra === 'all' || q.era === selectedEra));
+            if (type === 'weak') {
+                quizList = baseList.filter(q => { const s = getStat(q.id); return s.w > 0 && s.s < 3; });
+                quizList.sort((a, b) => getStat(b.id).w - getStat(a.id).w);
+                if (quizList.length === 0) { alert("苦手の記録がありません！まずは通常実戦へ。"); location.reload(); return; }
+            } else {
+                quizList = baseList.sort(() => Math.random() - 0.5);
+            }
+            quizList = quizList.slice(0, 10);
+            playerHp = 100; enemyHp = 100; currentIdx = 0;
+            updateHpUI(); showQuestion();
+        }
+
+        function updateHpUI() {
+            document.getElementById('p-hp').style.width = Math.max(0, playerHp) + "%";
+            document.getElementById('e-hp').style.width = Math.max(0, enemyHp) + "%";
+        }
+        function showQuestion() {
+            if (playerHp <= 0 || enemyHp <= 0 || currentIdx >= quizList.length) { endGame(); return; }
+            userInput = ""; renderInput();
+            document.getElementById('input-display').style.color = "#fff";
+            document.getElementById('event-name').innerText = quizList[currentIdx].e;
+            document.getElementById('hint-text').innerText = quizList[currentIdx].h;
+            document.getElementById('hint-text').style.opacity = 0;
+            startTimer();
+        }
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            let start = Date.now();
+            timerInterval = setInterval(() => {
+                let ratio = 1 - ((Date.now() - start) / 12000);
+                document.getElementById('timer-fill').style.width = Math.max(0, ratio * 100) + "%";
+                if (ratio < 0.5) document.getElementById('hint-text').style.opacity = 1;
+                if (ratio <= 0) { clearInterval(timerInterval); processResult(false); }
+            }, 50);
+        }
+        function tapNum(n) { playSound('key'); if (userInput.length < 4) { userInput += n; renderInput(); } }
+        function tapClear() { playSound('key'); userInput = ""; renderInput(); }
+        function renderInput() { document.getElementById('input-display').innerText = userInput || "____"; }
+        function tapOk() { if (userInput === "") return; clearInterval(timerInterval); processResult(userInput === quizList[currentIdx].y); }
+
+        function processResult(correct) {
+            const slash = document.getElementById('slash'), display = document.getElementById('input-display'), container = document.getElementById('main-wrapper');
+            saveStat(quizList[currentIdx].id, correct, 'battle');
+            if (correct) {
+                playSound('slash'); slash.classList.remove('slash-anim'); void slash.offsetWidth; slash.classList.add('slash-anim');
+                enemyHp -= 20; display.style.color = "#4caf50";
+            } else {
+                playSound('damage'); container.classList.add('damage-flash'); setTimeout(() => container.classList.remove('damage-flash'), 300);
+                playerHp -= 25; display.style.color = "#f44336"; display.innerText = quizList[currentIdx].y;
+            }
+            updateHpUI(); setTimeout(() => { currentIdx++; showQuestion(); }, 1300);
+        }
+        function endGame() {
+            clearInterval(timerInterval); document.getElementById('game-ui').classList.add('hidden'); document.getElementById('result-screen').classList.remove('hidden');
+            const win = enemyHp <= 0; const lose = playerHp <= 0;
+            let title = win ? "完全勝利" : (lose ? "敗北" : "無念");
+            let msg = win ? "歴史を極めし者なり！" : (lose ? "修行が足りぬようですぞ。" : "敵を倒しきれなかった。無念。");
+            document.getElementById('res-title').innerText = title; document.getElementById('res-msg').innerText = msg;
+        }
+
+        // --- フラッシュカード ---
+        function startFlash() {
+            document.getElementById('flash-ui').classList.remove('hidden');
+            let baseList = masterData.filter(q => (selectedEra === 'all' || q.era === selectedEra));
+            let weightedList = [];
+            baseList.forEach(q => {
+                const s = getStat(q.id);
+                let count = 1;
+                if (s.f === -1) { if (Math.random() < 0.1) count = 1; else count = 0; }
+                else if (s.f === 1) count = 3;
+                for (let i = 0; i < count; i++) weightedList.push(q);
+            });
+            if (weightedList.length === 0) weightedList = baseList;
+            quizList = weightedList.sort(() => Math.random() - 0.5);
+            currentIdx = 0; showFcCard();
+        }
+        function showFcCard() {
+            if (currentIdx >= quizList.length) { alert("一通りの修行を終えました！"); location.reload(); return; }
+            fcStep = 0; const q = quizList[currentIdx];
+            document.getElementById('fc-progress').innerText = `${currentIdx + 1} / ${quizList.length}`;
+            document.getElementById('fc-year').innerText = q.y;
+            document.getElementById('fc-goro').innerText = q.h;
+            document.getElementById('fc-event').innerText = q.e;
+            document.getElementById('fc-goro').classList.add('hidden');
+            document.getElementById('fc-event').classList.add('hidden');
+            document.getElementById('fc-actions').classList.add('hidden');
+            document.getElementById('fc-msg').innerText = "タップでゴロを見る";
+            document.getElementById('fc-msg').classList.remove('hidden');
+        }
+        function nextFcStep() {
+            if (fcStep >= 2) return;
+            fcStep++;
+            if (fcStep === 1) { playSound('key'); document.getElementById('fc-goro').classList.remove('hidden'); document.getElementById('fc-msg').innerText = "タップで答えを見る"; }
+            else if (fcStep === 2) { playSound('ok'); document.getElementById('fc-event').classList.remove('hidden'); document.getElementById('fc-actions').classList.remove('hidden'); document.getElementById('fc-msg').classList.add('hidden'); }
+        }
+        function rateCard(rating) {
+            const q = quizList[currentIdx];
+            const s = getStat(q.id);
+            if (rating === 'memo') s.f = -1; else if (rating === 'normal') s.f = 0; else if (rating === 'weak') s.f = 1;
+            saveStat(q.id, true, 'flash');
+            playSound('ok'); currentIdx++; showFcCard();
+        }
+
+        // --- 並び替え（機能強化版） ---
+        // 正解データ（令和まで）
+        const correctOrder = ["旧石器", "縄文", "弥生", "古墳", "飛鳥", "奈良", "平安", "鎌倉", "南北朝", "室町", "安土桃山", "江戸", "明治", "大正", "昭和", "平成", "令和"];
+
+        let draggingItem = null;
+        let dragClone = null;
+        let placeholder = null;
+        let dragOffsetY = 0;
+        let dragOffsetX = 0;
+        let autoScrollInterval = null;
+
+        function startSortGame() {
+            document.getElementById('sort-ui').classList.remove('hidden');
+            // ランダムに並べる
+            const shuffled = [...correctOrder].sort(() => Math.random() - 0.5);
+            const container = document.getElementById('sort-container');
+            container.innerHTML = "";
+            shuffled.forEach(era => {
+                const div = document.createElement('div');
+                div.className = 'sort-item';
+                div.innerText = era;
+                div.dataset.val = era;
+                // 受動的リスナーではないことを明示
+                div.addEventListener('mousedown', onDragStart);
+                div.addEventListener('touchstart', onDragStart, { passive: false });
+                container.appendChild(div);
+            });
+        }
+
+        function onDragStart(e) {
+            if (e.target.tagName === 'BUTTON') return;
+
+            // 2本指以上の操作（スクロール）ならドラッグ処理をしない
+            if (e.touches && e.touches.length > 1) {
+                return;
+            }
+
+            e.preventDefault();
+
+            const item = e.target.closest('.sort-item');
+            if (!item) return;
+
+            playSound('grab');
+            if (navigator.vibrate) navigator.vibrate(10);
+
+            draggingItem = item;
+            const rect = item.getBoundingClientRect();
+
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+
+            dragOffsetY = clientY - rect.top;
+            dragOffsetX = clientX - rect.left;
+
+            dragClone = item.cloneNode(true);
+            dragClone.className = 'drag-clone';
+            dragClone.style.width = rect.width + 'px';
+            dragClone.style.height = rect.height + 'px';
+            dragClone.style.boxSizing = "border-box";
+
+            updateClonePosition(clientX, clientY);
+            document.body.appendChild(dragClone);
+
+            placeholder = document.createElement('div');
+            placeholder.className = 'sort-placeholder';
+            placeholder.style.height = rect.height + 'px';
+
+            item.parentNode.insertBefore(placeholder, item);
+            item.classList.add('invisible');
+
+            document.addEventListener('mousemove', onDragMove);
+            document.addEventListener('touchmove', onDragMove, { passive: false });
+            document.addEventListener('mouseup', onDragEnd);
+            document.addEventListener('touchend', onDragEnd);
+        }
+
+        function updateClonePosition(x, y) {
+            if (dragClone) {
+                dragClone.style.top = (y - dragOffsetY) + 'px';
+                dragClone.style.left = (x - dragOffsetX) + 'px';
+            }
+        }
+
+        function onDragMove(e) {
+            if (!dragClone) return;
+
+            if (e.touches && e.touches.length > 1) {
+                onDragEnd(e);
+                return;
+            }
+
+            e.preventDefault();
+
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+
+            updateClonePosition(clientX, clientY);
+            checkAutoScroll(clientY);
+
+            const elemBelow = document.elementFromPoint(clientX, clientY);
+            if (!elemBelow) return;
+
+            const target = elemBelow.closest('.sort-item');
+
+            if (target && target !== draggingItem && !target.classList.contains('invisible')) {
+                const targetRect = target.getBoundingClientRect();
+                const middleY = targetRect.top + targetRect.height / 2;
+
+                if (clientY < middleY) {
+                    if (placeholder.nextElementSibling !== target) {
+                        placeholder.parentNode.insertBefore(placeholder, target);
+                        playSound('pop');
+                    }
+                } else {
+                    if (placeholder.previousElementSibling !== target) {
+                        placeholder.parentNode.insertBefore(placeholder, target.nextElementSibling);
+                        playSound('pop');
+                    }
+                }
+            }
+        }
+
+        function checkAutoScroll(y) {
+            const container = document.getElementById('sort-container');
+            const rect = container.getBoundingClientRect();
+            const threshold = 60;
+            const speed = 15;
+
+            if (y < rect.top + threshold) {
+                startScroll(-speed);
+            } else if (y > rect.bottom - threshold) {
+                startScroll(speed);
+            } else {
+                stopScroll();
+            }
+        }
+
+        function startScroll(amount) {
+            if (autoScrollInterval) return;
+            autoScrollInterval = setInterval(() => {
+                const container = document.getElementById('sort-container');
+                container.scrollTop += amount;
+            }, 20);
+        }
+
+        function stopScroll() {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+        }
+
+        function onDragEnd(e) {
+            stopScroll();
+
+            document.removeEventListener('mousemove', onDragMove);
+            document.removeEventListener('touchmove', onDragMove);
+            document.removeEventListener('mouseup', onDragEnd);
+            document.removeEventListener('touchend', onDragEnd);
+
+            if (draggingItem && placeholder) {
+                placeholder.parentNode.insertBefore(draggingItem, placeholder);
+                placeholder.remove();
+                draggingItem.classList.remove('invisible');
+            }
+
+            if (dragClone) {
+                dragClone.remove();
+                dragClone = null;
+            }
+
+            draggingItem = null;
+            placeholder = null;
+            playSound('key');
+        }
+
+        function checkSortOrder() {
+            const items = document.querySelectorAll('#sort-container .sort-item');
+            let correctCount = 0;
+
+            items.forEach((item, idx) => {
+                if (item.dataset.val === correctOrder[idx]) {
+                    item.classList.add('correct');
+                    item.classList.remove('wrong');
+                    correctCount++;
+                } else {
+                    item.classList.add('wrong');
+                    item.classList.remove('correct');
+                }
+            });
+
+            if (correctCount === correctOrder.length) {
+                playSound('slash');
+                alert("見事！歴史の流れを完全に理解しています！");
+            } else {
+                playSound('damage');
+            }
+        }
+
+        // --- カードシステム ---
+        function saveCard(cardId) {
+            if (!userCards.includes(cardId)) {
+                userCards.push(cardId);
+                localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards));
+                return true; // New!
+            }
+            return false; // Already have
+        }
+
+        function showCollection() {
+            document.getElementById('collection-ui').classList.remove('hidden');
+            const grid = document.getElementById('col-grid');
+            grid.innerHTML = "";
+
+            let ownedCount = 0;
+            cardData.forEach(card => {
+                const owned = userCards.includes(card.id);
+                if (owned) ownedCount++;
+
+                const el = document.createElement('div');
+                // Apply rarity class if owned
+                el.className = `col-card ${owned ? 'r' + card.rarity : 'locked'}`;
+
+                // 星（レアリティ）
+                let stars = "★".repeat(card.rarity);
+
+                el.innerHTML = `
+                    <div style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:0 4px;">
+                        <div style="font-size:0.7rem; color:inherit; opacity:0.8;">No.${card.id.substring(1)}</div>
+                        <div class="rarity-star" style="font-size:0.8rem; color:${owned ? '#d32f2f' : '#888'}; text-shadow:0 0 1px #fff;">${stars}</div>
+                    </div>
+                    <div class="card-img-mini" style="width:95%; aspect-ratio:1/1; background:#fff; border-radius:4px; overflow:hidden; border:1px solid #777; margin: 5px 0;">
+                        ${owned ? `<img src='${card.img}' width="100%" height="100%" style="object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; font-size:2rem; color:#333;">?</div>'}
+                    </div>
+                    <div style="font-size:1.1rem; font-weight:bold; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; width:100%; text-align:center; padding-bottom:4px;">
+                        ${owned ? card.name : '???'}
+                    </div>
+                `;
+                el.onclick = () => { if (owned) openCardModal(card, false); };
+                grid.appendChild(el);
+            });
+            document.getElementById('col-count').innerText = `${ownedCount} / ${cardData.length}`;
+        }
+
+        function openCardModal_unused(card, isNew) {
+            const modal = document.getElementById('card-modal');
+            const view = document.getElementById('card-view-node');
+            const title = document.getElementById('card-get-title');
+
+            modal.classList.remove('hidden');
+            if (isNew) {
+                title.classList.remove('hidden');
+                playSound('ok');
+            } else {
+                title.classList.add('hidden');
+            }
+
+            // Reset classes
+            view.className = 'card-frame r' + card.rarity;
+
+            // Text Data
+            document.getElementById('cv-name').innerText = card.name;
+            document.getElementById('cv-title').innerText = card.title || "歴史人物";
+            document.getElementById('cv-desc').innerText = card.desc;
+
+            // Rarity Badge
+            const rLabels = ["?", "N", "R", "SR", "SSR"]; // Index 1..4
+            document.getElementById('cv-rarity-badge').innerText = rLabels[card.rarity] || "N";
+
+            // Image (Handle SVG or Path)
+            const imgEl = document.getElementById('cv-img');
+            imgEl.src = card.img;
+
+            // Stats (Default to 10 if missing)
+            const stats = card.stats || { str: 10, int: 10, cha: 10 };
+            document.getElementById('cv-str').innerText = stats.str;
+            document.getElementById('cv-int').innerText = stats.int;
+            document.getElementById('cv-cha').innerText = stats.cha;
+        }
+
+        function closeCardModal() {
+            document.getElementById('card-modal').classList.add('hidden');
+        }
+
+        // ゲーム終了時のドロップ判定（改造）
+        const originalEndGame = endGame;
+        endGame = function () { // override
+            clearInterval(timerInterval);
+            document.getElementById('game-ui').classList.add('hidden');
+
+            const win = enemyHp <= 0;
+
+            if (win) {
+                // ドロップ判定
+                const card = getRandomDrop();
+                const isNew = saveCard(card.id);
+
+                // 下記はリザルト表示後にカードゲット
+                originalEndGame();
+
+                // 1秒後にカードドロップ演出
+                setTimeout(() => {
+                    openCardModal(card, isNew);
+                }, 1000);
+            } else {
+                originalEndGame();
+            }
+        };
+
+        // NEW CORRECT FUNCTION
+        function openCardModal(card, isNew) {
+            const modal = document.getElementById('card-modal');
+            const view = document.getElementById('card-view-node');
+            const title = document.getElementById('card-get-title');
+
+            modal.classList.remove('hidden');
+            if (isNew) {
+                title.classList.remove('hidden');
+                playSound('ok');
+            } else {
+                title.classList.add('hidden');
+            }
+
+            // Reset class
+            view.className = '';
+            view.onclick = (e) => e.stopPropagation();
+
+            // Rarity Star SVG (Gold Star)
+            const starSvg = `<svg viewBox="0 0 24 24" class="rarity-star-svg"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/></svg>`;
+
+            // Helper for stats
+            const s = card.stats || { str: 0, int: 0, cha: 0 };
+
+            // HTML Structure
+            view.innerHTML = `
+                <div class="flip-container" onclick="this.classList.toggle('flipped')">
+                    <div class="flipper">
+                        <!-- FRONT FACE -->
+                        <div class="front">
+                            <div class="front-inner">
+                                <div class="card-bg"></div>
+                                
+                                <!-- Header -->
+                                <div class="card-top-bar"></div>
+                                <div class="group-icon">
+                                    <span>${card.group || '歴史'}</span>
+                                    <div style="font-size:0.5rem; margin-top:-2px;">▼</div>
+                                </div>
+                                
+                                <div class="name-container">
+                                    <div class="card-subtitle">${card.title || "歴史人物"}</div>
+                                    <div class="card-main-name">${card.name.replace(" ", "")}</div>
+                                </div>
+
+                                <div class="rarity-badge-star">
+                                    ${starSvg}
+                                    <span class="rarity-text">${["?", "N", "R", "SR", "SSR"][card.rarity] || "N"}</span>
+                                </div>
+
+                                <!-- Image -->
+                                <img src="${card.img}" class="card-char-img" alt="${card.name}">
+                                
+                                <div class="card-number">No.${card.id.substring(1)}</div>
+
+                                <!-- Bottom Area -->
+                                <div class="card-bottom-info">
+                                    <!-- Stats -->
+                                    <div class="stats-row">
+                                        <div class="stat-pill str"><span class="stat-icon">⚔️</span>つよさ ${s.str}</div>
+                                        <div class="stat-pill int"><span class="stat-icon">🧠</span>かしこさ ${s.int}</div>
+                                        <div class="stat-pill cha"><span class="stat-icon">💗</span>にんき ${s.cha}</div>
+                                    </div>
+                                    <!-- Desc -->
+                                    <div class="desc-box">
+                                        ${card.desc}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BACK FACE -->
+                        <div class="back">
+                            <!-- Header -->
+                            <div class="bk-header-modern">
+                                <div class="bk-name-large">${card.name}</div>
+                                <div class="bk-kana-small">${card.kana || card.name}</div>
+                                <div class="bk-life-row">${card.lifespan || "???-??"} [${card.group || "?"}]</div>
+                            </div>
+
+                            <div class="bk-content-scroll">
+                                <!-- Timeline -->
+                                <div class="timeline-flow">
+                                    ${(card.timeline || [{ y: "???", e: "詳細データなし" }]).map((t, i) => `
+                                        <div class="tl-item">
+                                            <span class="tl-year-badge">${t.y}</span>
+                                            <span class="tl-event">${t.e}</span>
+                                            ${i < (card.timeline || []).length - 1 ? '<div class="tl-arrow-down">↓</div>' : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <!-- Keywords -->
+                                <div class="bk-section-title">キーワード</div>
+                                <div class="bk-keywords-row">
+                                    ${(card.keywords || ["データなし"]).map(k => `<span class="bk-kw-item">${k}</span>`).join('')}
+                                </div>
+
+                                <!-- Mnemonic -->
+                                <div class="mnemonic-container">
+                                    <div class="mne-icon"></div>
+                                    <div class="mne-content">
+                                        <div class="mne-label">おぼえよう！</div>
+                                        <div class="mne-text">${card.mnemonic || "特別な覚え方はありません"}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Relations -->
+                                <div class="bk-section-title" style="text-align:center; border-top:1px dashed #ccc; padding-top:5px;">関係人物</div>
+                                <div class="relations-container">
+                                    ${renderRelations(card)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRelations(card) {
+            if (!card.relations || card.relations.length === 0) return '<div style="color:#999;">関係データなし</div>';
+
+            // Simplified 3-node render:  [Rel1] -> [HERO] <- [Rel2]
+            // We'll try to fit up to 2 relations
+
+            let html = "";
+            const heroName = card.name.split(" ")[0] || card.name;
+
+            // Rel 1
+            if (card.relations[0]) {
+                const r = card.relations[0];
+                html += `
+                    <div class="rel-node">${r.name}</div>
+                    <div class="rel-link">
+                        <span class="rel-label">(${r.type})</span>
+                        <span class="rel-arrow-icon">${r.dir === 'to' ? '➡' : '⬅'}</span>
+                    </div>
+                `;
+            }
+
+            // Hero
+            html += `<div class="rel-node main">${heroName}</div>`;
+
+            // Rel 2
+            if (card.relations[1]) {
+                const r = card.relations[1];
+                html += `
+                    <div class="rel-link">
+                        <span class="rel-label">(${r.type})</span>
+                        <span class="rel-arrow-icon">${r.dir === 'from' ? '➡' : '⬅'}</span>
+                    </div>
+                    <div class="rel-node">${r.name}</div>
+                `;
+            }
+            return html;
+        }
+    </script>
+</body>
+
+</html>
