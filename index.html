@@ -1745,8 +1745,13 @@
             const container = document.getElementById('analysis-container');
             container.innerHTML = "";
 
-            // データコード生成
-            const exportStr = btoa(unescape(encodeURIComponent(JSON.stringify(userStats))));
+            // データコード生成 (v2: statsとcardsを結合)
+            const exportData = {
+                v: 2,
+                stats: userStats,
+                cards: userCards
+            };
+            const exportStr = btoa(unescape(encodeURIComponent(JSON.stringify(exportData))));
             document.getElementById('export-area').value = exportStr;
 
             // グラフ生成
@@ -1806,13 +1811,27 @@
             try {
                 const json = decodeURIComponent(escape(atob(input)));
                 const parsed = JSON.parse(json);
+
                 if (confirm("現在のデータを上書きして読み込みますか？")) {
-                    userStats = parsed;
+                    if (parsed.v === 2) {
+                        // 新形式 (v2)
+                        userStats = parsed.stats || {};
+                        userCards = parsed.cards || [];
+                    } else {
+                        // 旧形式 (v1: statsのみ)
+                        userStats = parsed;
+                        // userCardsはそのまま維持するか、空にするか迷うが、データ移行の文脈なら維持または別途処理が必要。
+                        // ここでは「戦績データ移行」として、カードデータが無い旧コードの場合はカードを上書きしない（維持する）
+                        // あるいは旧コードにはカードデータが無いので、それは仕方ない。
+                    }
+
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(userStats));
+                    localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards));
                     alert("データの読み込みに成功しました！");
                     location.reload();
                 }
             } catch (e) {
+                console.error(e);
                 alert("コードが正しくありません。");
             }
         }
