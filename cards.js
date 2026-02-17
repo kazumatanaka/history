@@ -13,7 +13,7 @@ const cardData = [
             "cha": 98
         },
         "desc": "占いで国を治めた謎多き女王。「魏」に使いを送って「親魏倭王」の金印をもらったよ。",
-        "img": "/Users/kazumatanaka/.gemini/antigravity/brain/06e72343-820c-4f36-9e64-a04a9092413e/card_himiko_1771327623087.png",
+        "img": "./assets/images/card_himiko_1771327623087.png",
         "group": "弥生",
         "kana": "卑弥呼",
         "lifespan": "?-248",
@@ -54,7 +54,7 @@ const cardData = [
             "cha": 95
         },
         "desc": "一度に10人の話を聞けた天才！？天皇中心の国づくりを目指して、憲法や位の制度を作ったよ。",
-        "img": "/Users/kazumatanaka/.gemini/antigravity/brain/06e72343-820c-4f36-9e64-a04a9092413e/card_shotoku_1771327605575.png",
+        "img": "./assets/images/card_shotoku_1771327605575.png",
         "group": "飛鳥",
         "kana": "聖徳太子",
         "lifespan": "574-622",
@@ -103,7 +103,7 @@ const cardData = [
             "cha": 80
         },
         "desc": "「日出づる処の天子…」という有名な手紙を中国（隋）の皇帝に渡した度胸ある外交官！",
-        "img": "/Users/kazumatanaka/.gemini/antigravity/brain/06e72343-820c-4f36-9e64-a04a9092413e/card_imoko_1771331521760.png",
+        "img": "./assets/images/card_imoko_1771331521760.png",
         "group": "飛鳥",
         "kana": "小野妹子",
         "lifespan": "?-?",
@@ -148,7 +148,7 @@ const cardData = [
             "cha": 88
         },
         "desc": "中臣鎌足と協力して蘇我氏をたおした！「公地公民」を目指して改革を始めたよ（後の天智天皇）。",
-        "img": "/Users/kazumatanaka/.gemini/antigravity/brain/06e72343-820c-4f36-9e64-a04a9092413e/card_nakanooe_1771331544522.png",
+        "img": "./assets/images/card_nakanooe_1771331544522.png",
         "group": "飛鳥",
         "kana": "中大兄皇子",
         "lifespan": "626-671",
@@ -197,7 +197,7 @@ const cardData = [
             "cha": 85
         },
         "desc": "中大兄皇子を支えた名参謀。死ぬ直前に「藤原」という名字をもらい、のちの藤原氏の祖先となった！",
-        "img": "/Users/kazumatanaka/.gemini/antigravity/brain/06e72343-820c-4f36-9e64-a04a9092413e/card_kamatari_1771331574326.png",
+        "img": "./assets/images/card_kamatari_1771331574326.png",
         "group": "飛鳥",
         "kana": "中臣鎌足",
         "lifespan": "614-669",
@@ -238,7 +238,7 @@ const cardData = [
             "cha": 90
         },
         "desc": "仏教の力で国を守ろうとした天皇。奈良の大仏を作り、全国に国分寺を建てさせたよ。",
-        "img": "/Users/kazumatanaka/.gemini/antigravity/brain/06e72343-820c-4f36-9e64-a04a9092413e/card_shomu_1771331595763.png",
+        "img": "./assets/images/card_shomu_1771331595763.png",
         "group": "奈良",
         "kana": "聖武天皇",
         "lifespan": "701-756",
