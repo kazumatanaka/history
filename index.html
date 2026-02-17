@@ -7,15 +7,32 @@
     <title>歴史年号・真剣勝負 & 暗記カード</title>
     <style>
         :root {
-            --primary: #d32f2f;
-            --hp-fill: #4caf50;
-            --accent: #ff9800;
-            --panel-bg: rgba(0, 0, 0, 0.95);
+            /* Neo-Japanesque Palette */
+            --primary: #a61c24;
+            /* Deep Lacquer Red */
+            --primary-light: #d32f2f;
+            --secondary: #1a2a3a;
+            /* Dark Slate Blue */
+            --accent: #d4af37;
+            /* Gold */
+            --accent-glow: rgba(212, 175, 55, 0.5);
+            --bg-dark: #121212;
+            --surface: rgba(30, 30, 30, 0.8);
+            --text-main: #f0f0f0;
+            --text-sub: #b0b0b0;
+
+            /* Game Colors */
+            --hp-fill: #2e7d32;
             --rank-s: #ffd700;
             --rank-a: #ff4081;
             --rank-b: #4caf50;
             --rank-c: #2196f3;
             --rank-d: #9e9e9e;
+
+            /* UI Effects */
+            --glass-bg: rgba(20, 20, 20, 0.85);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --shadow-pop: 0 10px 20px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -24,7 +41,7 @@
         }
 
         body {
-            font-family: 'Hiragino Mincho ProN', serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #000;
             margin: 0;
             display: flex;
@@ -32,26 +49,40 @@
             align-items: center;
             height: 100dvh;
             overflow: hidden;
-            color: #eee;
+            color: var(--text-main);
             user-select: none;
             -webkit-user-select: none;
+        }
+
+        h1,
+        h2,
+        h3,
+        .card-main-name,
+        .bk-header-modern,
+        #event-name,
+        #fc-year {
+            font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+            letter-spacing: 0.05em;
         }
 
         #main-wrapper {
             width: 100%;
             max-width: 450px;
             height: 100%;
-            background: linear-gradient(to bottom, #1a2a3a, #000);
+            background: radial-gradient(circle at center, #1a1a1a, #000);
             position: relative;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
 
         /* 共通レイヤー */
         .overlay-screen {
             position: absolute;
             inset: 0;
-            background: var(--panel-bg);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -59,6 +90,7 @@
             align-items: center;
             padding: 20px;
             text-align: center;
+            transition: opacity 0.3s;
         }
 
         .btn-grid {
@@ -69,20 +101,38 @@
         }
 
         .select-btn {
-            background: #333;
-            color: white;
-            border: 2px solid #555;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            color: var(--text-main);
+            border: var(--glass-border);
             padding: 18px 5px;
             font-size: 1.1rem;
-            border-radius: 8px;
+            border-radius: 12px;
             font-family: inherit;
             cursor: pointer;
             position: relative;
+            /* overflow: hidden; Removed to allow badge to protrude */
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .select-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
+            pointer-events: none;
+            border-radius: inherit;
+            /* Ensure highlight matches button shape */
         }
 
         .select-btn:active {
-            background: var(--primary);
-            border-color: #fff;
+            transform: scale(0.96);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent);
         }
 
         .full-width {
@@ -109,54 +159,78 @@
         }
 
         .quit-btn {
-            background: #333;
-            border: 1px solid #666;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: #ccc;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
             cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 500;
         }
 
         .quit-btn:active {
-            background: #666;
+            background: rgba(255, 255, 255, 0.3);
             color: #fff;
+            transform: scale(0.95);
         }
 
         /* バトルUI */
+        /* バトルUI */
         .status-bar {
-            flex: 0 0 65px;
+            flex: 0 0 70px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 15px;
-            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 20px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+            z-index: 10;
         }
 
         .hp-container {
-            width: 40%;
+            width: 42%;
         }
 
         .hp-bar {
-            height: 22px;
-            background: #222;
-            border: 2px solid #fff;
-            border-radius: 11px;
+            height: 18px;
+            background: #111;
+            border: 1px solid #555;
+            border-radius: 9px;
             overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.8);
+            position: relative;
         }
 
         .hp-fill {
             height: 100%;
             width: 100%;
-            background: var(--hp-fill);
-            transition: width 0.3s;
+            background: linear-gradient(to bottom, #66bb6a, var(--hp-fill));
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
+        }
+
+        .hp-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .label {
-            font-size: 12px;
+            font-size: 0.8rem;
             font-weight: bold;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             display: block;
+            color: #ccc;
+            letter-spacing: 0.1em;
+            text-shadow: 0 1px 2px #000;
         }
 
         #battle-stage {
@@ -168,11 +242,14 @@
         }
 
         #enemy-samurai {
-            width: 100px;
-            height: 100px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 5 Q40 5 35 15 L40 25 L30 35 Q20 55 30 95 L70 95 Q80 55 70 35 L60 25 L65 15 Q60 5 50 5 Z" fill="black"/></svg>') no-repeat bottom center;
+            width: 150px;
+            /* Increased size per user request for "atmosphere" */
+            height: 150px;
+            background: url('./assets/images/enemy_samurai.png') no-repeat bottom center;
             background-size: contain;
             animation: sway 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.8));
+            /* Added shadow for depth */
         }
 
         @keyframes sway {
@@ -258,52 +335,69 @@
             opacity: 0;
         }
 
+        /* Input & Keypad */
         #input-display {
             font-size: 3rem;
             font-weight: bold;
-            letter-spacing: 10px;
+            letter-spacing: 0.2em;
             color: #fff;
-            height: 3.5rem;
-            border-bottom: 2px solid #444;
+            height: 4rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
             margin: 0 40px;
+            text-shadow: 0 0 10px var(--accent-glow);
+            font-family: 'Hiragino Mincho ProN', serif;
         }
 
         .keypad {
             flex: 1;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 15px;
-            background: #111;
+            gap: 12px;
+            padding: 20px;
+            background: linear-gradient(to top, #000, #1a1a1a);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .key {
-            background: #444;
-            color: #fff;
-            border: none;
+            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+            color: #eee;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             font-size: 1.8rem;
             font-weight: bold;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 5px 0 #000;
+            box-shadow: 0 4px 0 #111;
+            transition: transform 0.05s, box-shadow 0.05s;
         }
 
         .key:active {
             transform: translateY(4px);
-            box-shadow: none;
-            background: #666;
+            box-shadow: 0 0 0 #111;
+            background: #444;
         }
 
         .key.ok {
-            background: var(--primary);
+            background: linear-gradient(145deg, #ff5252, var(--primary));
             font-size: 2rem;
-            box-shadow: 0 5px 0 #600;
+            box-shadow: 0 4px 0 #7f0000;
+            border: none;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .key.ok:active {
+            box-shadow: 0 0 0 #7f0000;
         }
 
         .key.c {
-            background: #666;
+            background: linear-gradient(145deg, #757575, #616161);
+            box-shadow: 0 4px 0 #424242;
+        }
+
+        .key.c:active {
+            box-shadow: 0 0 0 #424242;
         }
 
         /* フラッシュカードUI */
@@ -386,12 +480,13 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            background: #222;
+            background: radial-gradient(circle at center, #1a1a1a, #000);
         }
 
         #sort-header {
-            padding: 10px;
-            background: #333;
+            padding: 15px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
             font-weight: bold;
             color: #fff;
@@ -406,7 +501,7 @@
             flex: 1;
             overflow-y: auto;
             /* スクロール可能に */
-            padding: 20px 10px;
+            padding: 20px 15px;
             position: relative;
             -webkit-overflow-scrolling: touch;
             /* 滑らかスクロール */
@@ -414,38 +509,35 @@
 
         /* スクロールバー装飾 */
         #sort-container::-webkit-scrollbar {
-            width: 10px;
+            width: 6px;
         }
 
         #sort-container::-webkit-scrollbar-track {
-            background: #222;
+            background: #111;
         }
 
         #sort-container::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 5px;
-            border: 1px solid #333;
-        }
-
-        #sort-container::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
+            background: #444;
+            border-radius: 3px;
         }
 
         .sort-item {
-            background: #444;
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
             color: #fff;
             padding: 15px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             border-radius: 8px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             display: flex;
             justify-content: center;
             align-items: center;
             touch-action: none;
-            border: 2px solid #555;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
             box-sizing: border-box;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            font-family: 'Hiragino Mincho ProN', serif;
         }
 
         .sort-placeholder {
@@ -495,7 +587,7 @@
             width: 100%;
             height: 100%;
             overflow-y: auto;
-            background: #111;
+            background: radial-gradient(circle at center, #1a1a1a, #000);
             padding: 20px;
         }
 
@@ -504,7 +596,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            border-bottom: 1px solid #444;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 10px;
         }
 
@@ -512,9 +604,10 @@
             display: flex;
             align-items: center;
             margin-bottom: 15px;
-            background: #222;
+            background: linear-gradient(to right, #222, #111);
             padding: 10px;
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .era-name {
@@ -522,16 +615,18 @@
             font-weight: bold;
             font-size: 1rem;
             text-align: center;
+            font-family: 'Hiragino Mincho ProN', serif;
         }
 
         .era-graph {
             flex: 1;
             margin: 0 15px;
-            height: 20px;
-            background: #444;
+            height: 16px;
+            background: #333;
             border-radius: 10px;
             overflow: hidden;
             position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
         }
 
         .era-bar {
@@ -545,10 +640,12 @@
             font-size: 1.5rem;
             font-weight: bold;
             text-align: center;
+            font-family: 'Hiragino Mincho ProN', serif;
         }
 
         .rank-s {
             color: var(--rank-s);
+            text-shadow: 0 0 5px var(--rank-s);
         }
 
         .rank-a {
@@ -569,20 +666,22 @@
 
         #data-transfer-area {
             margin-top: 30px;
-            padding: 15px;
-            background: #333;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         textarea {
             width: 100%;
             height: 60px;
-            background: #111;
-            color: #fff;
-            border: 1px solid #555;
+            background: #000;
+            color: #ddd;
+            border: 1px solid #444;
             border-radius: 4px;
-            padding: 5px;
+            padding: 8px;
             font-size: 0.8rem;
+            font-family: monospace;
         }
 
         .damage-flash {
@@ -591,7 +690,7 @@
 
         @keyframes flash-red {
             50% {
-                background: rgba(255, 0, 0, 0.6);
+                background: rgba(255, 0, 0, 0.4);
             }
         }
 
@@ -632,9 +731,9 @@
 
         .col-card {
             aspect-ratio: 2/3;
-            background: #333;
-            border: 2px solid #555;
-            border-radius: 6px;
+            background: linear-gradient(135deg, #2c2c2c, #1f1f1f);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -642,8 +741,8 @@
             padding: 5px;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-            transition: transform 0.1s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s, box-shadow 0.1s;
         }
 
         .col-card:active {
@@ -653,29 +752,29 @@
         /* Collection Card Rarities */
         .col-card.r1 {
             border-color: #8d6e63;
-            background: #d7ccc8;
+            background: linear-gradient(135deg, #d7ccc8, #a1887f);
             color: #3e2723;
         }
 
         .col-card.r2 {
-            border-color: #78909c;
-            background: linear-gradient(135deg, #eceff1, #b0bec5);
+            border-color: #90a4ae;
+            background: linear-gradient(135deg, #eceff1, #cfd8dc);
             color: #37474f;
         }
 
         .col-card.r3 {
             border-color: #ffd700;
-            background: linear-gradient(135deg, #fffde7, #ffd54f);
+            background: linear-gradient(135deg, #fff9c4, #ffd54f);
             color: #333;
-            box-shadow: 0 0 10px #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
         }
 
         .col-card.r4 {
             border-color: #e040fb;
-            background: linear-gradient(135deg, #f3e5f5, #e1bee7, #ce93d8);
-            color: #333;
-            box-shadow: 0 0 15px #e040fb;
-            animation: pulse-border 2s infinite;
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            color: #4a148c;
+            box-shadow: 0 0 20px rgba(224, 64, 251, 0.5);
+            animation: pulse-border 3s infinite alternate;
         }
 
         @keyframes pulse-border {
@@ -1490,6 +1589,41 @@
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
+
+        // Noise Buffer for realistic effects
+        let noiseBuffer = null;
+        function createNoiseBuffer() {
+            if (noiseBuffer) return noiseBuffer;
+            const bufferSize = audioCtx.sampleRate * 2; // 2 seconds
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            noiseBuffer = buffer;
+            return buffer;
+        }
+
+        function playNoise(duration, filterType = 'lowpass', filterFreq = 1000) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = createNoiseBuffer();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            filter.type = filterType;
+            filter.frequency.value = filterFreq;
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            noise.start();
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            noise.stop(audioCtx.currentTime + duration);
+        }
+
         function playTone(type, freq, duration, vol = 0.1) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
@@ -1503,14 +1637,74 @@
             osc.start();
             osc.stop(audioCtx.currentTime + duration);
         }
+
+        function playGong() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            // Additive synthesis for metallic sound
+            const freqs = [200, 300, 450, 600];
+            freqs.forEach(f => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = f;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.0);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 2.0);
+            });
+        }
+
+        function playSlash() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = createNoiseBuffer();
+            const filter = audioCtx.createBiquadFilter();
+            const gain = audioCtx.createGain();
+
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+            filter.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3); // Swipe down effect
+
+            gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start();
+            noise.stop(audioCtx.currentTime + 0.3);
+        }
+
+        function playDamage() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            // Heavy thud
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.3);
+
+            gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+
+            // Add some noise crunch
+            playNoise(0.2, 'lowpass', 500);
+        }
+
         function playSound(type) {
             switch (type) {
-                case 'key': playTone('sine', 800, 0.08, 0.1); break;
-                case 'slash': playTone('sawtooth', 600, 0.1, 0.15); setTimeout(() => playTone('square', 300, 0.2, 0.15), 50); break;
-                case 'damage': playTone('sawtooth', 100, 0.3, 0.3); playTone('square', 80, 0.3, 0.3); break;
+                case 'key': playTone('sine', 800, 0.05, 0.05); break;
+                case 'slash': playSlash(); break;
+                case 'damage': playDamage(); break;
                 case 'ok': playTone('sine', 1200, 0.1, 0.1); setTimeout(() => playTone('sine', 1800, 0.2, 0.1), 100); break;
                 case 'grab': playTone('triangle', 200, 0.1, 0.2); break;
                 case 'pop': playTone('sine', 600, 0.05, 0.05); break;
+                case 'start': playGong(); break; // New type for battle start
             }
         }
 
@@ -1624,7 +1818,7 @@
 
         // --- バトル ---
         function startBattle(type) {
-            playSound('ok');
+            playSound('start'); // Gong sound
             document.getElementById('diff-screen').classList.add('hidden');
             document.getElementById('game-ui').classList.remove('hidden');
 
