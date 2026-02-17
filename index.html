@@ -242,14 +242,15 @@
         }
 
         #enemy-samurai {
-            width: 150px;
-            /* Increased size per user request for "atmosphere" */
-            height: 150px;
-            background: url('./assets/images/enemy_samurai.png') no-repeat bottom center;
+            width: 220px;
+            /* Significantly larger for dramatic effect */
+            height: 220px;
+            background: url('./assets/images/enemy_samurai_nanobanana.png') no-repeat bottom center;
             background-size: contain;
-            animation: sway 4s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.8));
-            /* Added shadow for depth */
+            animation: sway 5s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(166, 28, 36, 0.8));
+            /* Strong red aura */
+            z-index: 5;
         }
 
         @keyframes sway {
