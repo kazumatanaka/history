@@ -15,23 +15,18 @@
             /* --- プロ仕様カラーパレット --- */
             --primary: #b71c1c; /* 深紅 */
             --primary-glow: #ff5252;
-            --secondary: #1a237e; /* 濃紺 */
             --accent: #ffd700; /* 金箔 */
             --accent-glow: rgba(255, 215, 0, 0.6);
             
             /* 背景・ガラス効果 */
             --bg-dark: #050505;
-            --glass-bg: rgba(20, 20, 20, 0.75); /* 暗めの磨りガラス */
-            --glass-border: 1px solid rgba(255, 255, 255, 0.15);
+            --glass-bg: rgba(20, 20, 20, 0.75);
             --text-main: #f0f0f0;
-            --text-sub: #b0b0b0;
             
-            /* ゲーム用色 */
-            --hp-fill: #2e7d32;
-            --rank-s: #ffd700;
-            --rank-a: #ff4081;
-            --rank-b: #4caf50;
-            --rank-c: #2196f3;
+            /* カードUI用 */
+            --card-width: 300px;
+            --card-height: 460px;
+            --holo-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #a18cd1 40%, #fbc2eb 60%, #8fd3f4 80%, #ff9a9e 100%);
             
             /* フォント */
             --font-main: 'Shippori Mincho', serif;
@@ -62,7 +57,7 @@
             background-repeat: no-repeat;
         }
 
-        h1, h2, h3, button, .card-main-name {
+        h1, h2, h3, button {
             font-family: var(--font-main);
             letter-spacing: 0.05em;
         }
@@ -171,45 +166,19 @@
         .slash-btn:hover {
             background: linear-gradient(90deg, rgba(183, 28, 28, 0.4) 0%, rgba(0,0,0,0.6) 100%);
             border-left-color: var(--primary-glow);
-            padding-left: 35px; /* スライド効果 */
+            padding-left: 35px;
             text-shadow: 0 0 10px var(--primary-glow);
             transform: translateX(5px);
-        }
-
-        .slash-btn:active {
-            transform: scale(0.98);
         }
 
         .slash-btn:hover::before {
             left: 100%;
         }
 
-        .btn-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-        }
-
-        .btn-sub {
-            font-size: 0.7rem;
-            color: #ccc;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 4px;
-        }
-
-        .btn-icon {
-            font-size: 1.8rem;
-            opacity: 0.5;
-            transition: transform 0.3s;
-        }
-
-        .slash-btn:hover .btn-icon {
-            opacity: 1;
-            transform: scale(1.2) rotate(-10deg);
-            color: var(--accent);
-            text-shadow: 0 0 10px var(--accent);
-        }
+        .btn-title { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.1em; }
+        .btn-sub { font-size: 0.7rem; color: #ccc; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+        .btn-icon { font-size: 1.8rem; opacity: 0.5; transition: transform 0.3s; }
+        .slash-btn:hover .btn-icon { opacity: 1; transform: scale(1.2) rotate(-10deg); color: var(--accent); }
 
         /* --- 戻るボタン等 --- */
         .quit-btn {
@@ -223,10 +192,7 @@
             backdrop-filter: blur(4px);
             transition: all 0.2s;
         }
-        .quit-btn:hover {
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-        }
+        .quit-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
 
         /* --- バトル画面 UI --- */
         .status-bar {
@@ -238,77 +204,38 @@
             background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
             z-index: 10;
         }
-
-        .hp-container {
-            width: 40%;
-        }
-
-        .label {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #ddd;
-            text-shadow: 1px 1px 2px #000;
-            margin-bottom: 5px;
-            display: block;
-        }
-
+        .hp-container { width: 40%; }
+        .label { font-size: 0.9rem; font-weight: 700; color: #ddd; margin-bottom: 5px; display: block; }
         .hp-bar {
-            height: 12px;
-            background: #222;
-            border: 1px solid #555;
-            transform: skewX(-20deg);
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            height: 12px; background: #222; border: 1px solid #555;
+            transform: skewX(-20deg); overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
-
         .hp-fill {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(to right, #43a047, var(--hp-fill));
-            transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 0 10px var(--hp-fill);
+            height: 100%; width: 100%;
+            background: linear-gradient(to right, #43a047, var(--hp-fill, #2e7d32));
+            transition: width 0.4s; box-shadow: 0 0 10px #43a047;
         }
-        
-        #e-hp {
-            background: linear-gradient(to right, #e53935, #b71c1c);
-            box-shadow: 0 0 10px #b71c1c;
-        }
+        #e-hp { background: linear-gradient(to right, #e53935, #b71c1c); box-shadow: 0 0 10px #b71c1c; }
 
         #battle-stage {
-            flex: 1;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            padding-bottom: 20px;
+            flex: 1; position: relative; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px;
         }
-
         #enemy-samurai {
-            width: 280px;
-            height: 280px;
-            /* 敵画像パス */
+            width: 280px; height: 280px;
             background: url('./assets/images/enemy_samurai_nanobanana.png') no-repeat bottom center;
             background-size: contain;
             animation: sway 4s ease-in-out infinite;
             filter: drop-shadow(0 0 30px rgba(183, 28, 28, 0.4));
             z-index: 5;
         }
-        
         @keyframes sway {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-10px) scale(1.02); }
         }
-
-        /* 斬撃エフェクト */
         #slash {
-            position: absolute;
-            top: 50%; left: 0;
-            width: 0%; height: 5px;
-            background: #fff;
+            position: absolute; top: 50%; left: 0; width: 0%; height: 5px; background: #fff;
             box-shadow: 0 0 15px 5px #fff, 0 0 30px 10px var(--primary-glow);
-            transform: rotate(-25deg);
-            z-index: 20;
-            pointer-events: none;
+            transform: rotate(-25deg); z-index: 20; pointer-events: none;
         }
         .slash-anim { animation: slash-effect 0.3s cubic-bezier(0.1, 0.7, 1.0, 0.1) forwards; }
         @keyframes slash-effect {
@@ -317,143 +244,147 @@
             100% { width: 120%; opacity: 0; }
         }
 
-        /* UI MID */
         .ui-mid {
-            background: rgba(0, 0, 0, 0.8);
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding: 15px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.8); border-top: 1px solid rgba(255,255,255,0.2);
+            padding: 15px; text-align: center; position: relative;
         }
-
-        #timer-gauge {
-            width: 100%; height: 4px;
-            background: #333;
-            margin-bottom: 15px;
-        }
-        #timer-fill {
-            width: 100%; height: 100%;
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-        }
-
-        #event-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 5px;
-            min-height: 2.5rem;
-            text-shadow: 0 2px 4px #000;
-        }
-
+        #timer-gauge { width: 100%; height: 4px; background: #333; margin-bottom: 15px; }
+        #timer-fill { width: 100%; height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        #event-name { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 5px; min-height: 2.5rem; }
         #input-display {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 0.2em;
-            margin: 5px 0;
-            text-shadow: 0 0 15px var(--accent-glow);
-            font-family: 'Times New Roman', serif;
+            font-size: 3.5rem; font-weight: 700; color: #fff; letter-spacing: 0.2em;
+            margin: 5px 0; text-shadow: 0 0 15px var(--accent-glow); font-family: 'Times New Roman', serif;
         }
 
-        /* テンキー */
         .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 15px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px;
             background: rgba(10, 10, 10, 0.95);
         }
-
         .key {
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            color: #eee;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-family: 'Times New Roman', serif;
-            font-size: 1.8rem;
-            padding: 15px 0;
-            cursor: pointer;
-            transition: all 0.1s;
-            position: relative;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a); color: #eee;
+            border: 1px solid rgba(255, 255, 255, 0.1); font-family: 'Times New Roman', serif;
+            font-size: 1.8rem; padding: 15px 0; cursor: pointer; position: relative;
         }
-        
-        .key::after {
-            content: ''; position: absolute; inset: 0;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-            pointer-events: none;
-        }
-
-        .key:active {
-            transform: scale(0.95);
-            background: #333;
-            color: var(--accent);
-        }
-
+        .key:active { transform: scale(0.95); background: #333; color: var(--accent); }
         .key.ok {
-            background: linear-gradient(145deg, #d32f2f, #b71c1c);
-            font-size: 1.8rem;
-            font-family: var(--font-main);
-            color: #fff;
-            border: 1px solid #ff5252;
-            text-shadow: 0 1px 2px #000;
-        }
-        
-        .key.ok:active {
-            background: #f44336;
-            box-shadow: 0 0 15px #f44336;
+            background: linear-gradient(145deg, #d32f2f, #b71c1c); font-family: var(--font-main);
+            color: #fff; border: 1px solid #ff5252;
         }
 
-        /* --- コレクション & カード --- */
+        /* --- コレクション (豪華版) --- */
         #collection-ui {
-            background: rgba(10,10,10,0.95);
+            background: rgba(15, 15, 15, 0.98); display: flex; flex-direction: column; padding: 0;
         }
-
+        #col-header {
+            padding: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;
+        }
         #col-grid {
-            padding: 10px;
-            gap: 10px;
+            flex: 1; overflow-y: auto; padding: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-content: start;
         }
-
         .col-card {
-            background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            aspect-ratio: 2/3; background: linear-gradient(135deg, #2c2c2c, #1f1f1f);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-around;
+            padding: 5px; cursor: pointer; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .col-card.r3 { border: 1px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+        .col-card.r4 { border: 1px solid #e040fb; box-shadow: 0 0 15px rgba(224, 64, 251, 0.4); animation: pulse-border 3s infinite; }
+        @keyframes pulse-border { 50% { box-shadow: 0 0 5px #e040fb; } }
+
+        .col-card.new::after {
+            content: "NEW"; position: absolute; top: -5px; right: -5px; background: #f44336;
+            color: #fff; font-size: 0.6rem; padding: 2px 4px; border-radius: 4px; font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        /* --- カード詳細モーダル (ホログラム & フリップ) --- */
+        #card-modal {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 200;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .flip-container {
+            perspective: 1000px; width: var(--card-width); height: var(--card-height); margin: 20px auto; cursor: pointer;
+        }
+        .flip-container.flipped .flipper { transform: rotateY(180deg); }
+        .flipper {
+            transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d;
+            position: relative; width: 100%; height: 100%;
+        }
+        .front, .back {
+            backface-visibility: hidden; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;
         }
         
-        .col-card.r3, .col-card.r4 {
-            border: 1px solid var(--accent);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        /* 表面 (ホログラム) */
+        .front {
+            z-index: 2; transform: rotateY(0deg);
+            background: linear-gradient(to bottom right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+            background-size: 400% 400%; animation: holo-shine 6s ease infinite; padding: 6px;
         }
+        @keyframes holo-shine { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+        
+        .front-inner {
+            width: 100%; height: 100%; background: #fff; border-radius: 9px; position: relative;
+            display: flex; flex-direction: column; border: 2px solid #000; overflow: hidden;
+        }
+        .card-bg { position: absolute; inset: 0; background: linear-gradient(to bottom, #87CEEB, #E0F7FA); z-index: 0; }
+        .card-char-img {
+            position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+            width: 90%; height: 60%; object-fit: contain; z-index: 1; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+        }
+        .card-top-bar { position: absolute; top: 0; width: 100%; height: 80px; z-index: 10; }
+        .group-icon {
+            position: absolute; top: 5px; left: 5px; width: 40px; height: 40px; background: #0d47a1;
+            color: #fff; border: 2px solid #fff; display: flex; justify-content: center; align-items: center;
+            font-size: 0.6rem; z-index: 20; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: bold;
+        }
+        .name-container {
+            position: absolute; top: 10px; width: 100%; text-align: center; z-index: 15;
+        }
+        .card-subtitle {
+            font-size: 0.6rem; background: rgba(255,255,255,0.8); padding: 0 4px; border-radius: 4px; display: inline-block;
+        }
+        .card-main-name {
+            font-size: 1.6rem; font-weight: 900; color: #000; text-shadow: 2px 2px 0 #fff; margin-top: 2px;
+        }
+        .rarity-badge-star {
+            position: absolute; top: 5px; right: 5px; width: 45px; height: 45px; z-index: 20;
+        }
+        .rarity-text {
+            position: absolute; top: 12px; right: 12px; font-weight: 900; color: #fff; font-size: 1rem; text-shadow: 1px 1px 0 #000;
+        }
+        .card-bottom-info {
+            position: absolute; bottom: 0; width: 100%; padding: 8px; background: rgba(0,0,0,0.85);
+            color: #fff; z-index: 10;
+        }
+        .stats-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 5px; }
+        .stat-pill {
+            font-size: 0.7rem; padding: 2px 6px; border-radius: 8px; border: 1px solid #777; background: #333;
+        }
+        .desc-box { font-size: 0.7rem; line-height: 1.3; text-align: justify; opacity: 0.9; }
 
-        /* --- 汎用ボタンスタイル --- */
+        /* 裏面 (古文書風) */
+        .back {
+            transform: rotateY(180deg); z-index: 1; background: #fdfbf7; border: 6px solid #fdfbf7;
+            outline: 2px solid #d4af37; outline-offset: -4px; color: #333; padding: 15px; display: flex; flex-direction: column;
+        }
+        .bk-header { text-align: center; border-bottom: 2px solid #d4af37; padding-bottom: 5px; margin-bottom: 10px; }
+        .bk-name { font-size: 1.2rem; font-weight: bold; }
+        .bk-scroll { flex: 1; overflow-y: auto; font-size: 0.85rem; }
+        .timeline-flow { border-left: 2px solid #ccc; margin: 10px 0 10px 10px; padding-left: 10px; }
+        .tl-item { margin-bottom: 8px; position: relative; }
+        .tl-year { font-weight: bold; background: #333; color: #fff; padding: 1px 4px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; }
+        .mne-box { background: #e3f2fd; border: 1px dashed #2196f3; padding: 8px; border-radius: 5px; margin-top: 10px; }
+
+        /* 汎用ボタン */
         .select-btn {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            font-size: 1.1rem;
-            font-family: var(--font-main);
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px; font-size: 1.1rem; font-family: var(--font-main); cursor: pointer; position: relative;
         }
-        
-        .select-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--accent);
-            color: var(--accent);
-            text-shadow: 0 0 8px var(--accent);
-        }
-
-        .btn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 100%;
-        }
-        
+        .select-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--accent); color: var(--accent); }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
         .full-width { grid-column: span 2; }
 
     </style>
@@ -603,16 +534,16 @@
             </div>
         </div>
 
-        <div id="collection-ui" class="overlay-screen hidden" style="display:flex; flex-direction:column; padding:0; background:rgba(0,0,0,0.9);">
-            <div style="width:100%; padding:15px; background:rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+        <div id="collection-ui" class="overlay-screen hidden">
+            <div id="col-header">
                 <button class="quit-btn" onclick="location.reload()">戻る</button>
                 <span style="font-size:1.2rem; font-weight:bold;">宝物庫</span>
                 <span id="col-count" style="font-size:0.9rem; color:#aaa;">0/0</span>
             </div>
-            <div id="col-grid" style="flex:1; overflow-y:auto; display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; padding:10px; align-content:start;"></div>
+            <div id="col-grid"></div>
         </div>
 
-        <div id="card-modal" class="hidden" onclick="closeCardModal()" style="position:absolute; inset:0; background:rgba(0,0,0,0.9); z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(10px);">
+        <div id="card-modal" class="hidden" onclick="closeCardModal()">
             <div class="card-get-title hidden" id="card-get-title" style="font-size:2.5rem; color:var(--accent); margin-bottom:20px; text-shadow:0 0 20px var(--accent);">お宝発見！</div>
             <div id="card-view-node"></div> <p style="color:#fff; margin-top:20px; font-size:0.8rem; opacity:0.7;">タップして閉じる</p>
         </div>
@@ -653,7 +584,7 @@
 
     <script>
         /* =========================================
-           ここから JavaScript ロジック (修正・統合版)
+           統合版 JavaScript ロジック
            ========================================= */
         const STORAGE_KEY = 'history_game_v1';
         let userStats = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -707,11 +638,7 @@
         let currentIdx = 0, quizList = [], userInput = "", timerInterval, fcStep = 0;
 
         window.onload = function () {
-            // masterData, cardData は外部ファイルから直接読み込まれるため、
-            // window.xxx として参照せず、直接変数として扱います。
-            if (typeof masterData === 'undefined') { 
-                console.warn('questions.js が読み込まれていません。');
-            } else {
+            if (typeof masterData !== 'undefined') {
                 masterData.forEach((d, i) => d.id = i);
             }
         };
@@ -736,7 +663,7 @@
             } else { startFlash(); }
         }
 
-        // --- バトルロジック ---
+        // --- バトル ---
         function startBattle(type) {
             playSound('ok');
             document.getElementById('diff-screen').classList.add('hidden');
@@ -805,23 +732,15 @@
             document.getElementById('res-title').innerText = win ? "完全勝利" : "敗北";
             document.getElementById('res-msg').innerText = win ? "歴史の闇を切り裂いた！" : "修行して出直せ。";
             
-            if (win) {
-                // 【修正箇所】カードドロップ処理
-                // window.cardData ではなく 直接 getRandomDrop() を呼び出します
-                if (typeof getRandomDrop === 'function') {
-                    const drop = getRandomDrop(); // レアリティ抽選ロジックを使用
-                    
-                    if (drop) { // ドロップがあった場合
-                        const isNew = !userCards.includes(drop.id);
-                        if(isNew) { 
-                            userCards.push(drop.id); 
-                            localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards)); 
-                        }
-                        // 1.5秒後にモーダルを表示
-                        setTimeout(() => openCardModal(drop, isNew), 1500);
+            if (win && typeof getRandomDrop === 'function') {
+                const drop = getRandomDrop(); 
+                if (drop) {
+                    const isNew = !userCards.includes(drop.id);
+                    if(isNew) { 
+                        userCards.push(drop.id); 
+                        localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards)); 
                     }
-                } else {
-                    console.error("getRandomDrop 関数が見つかりません。cards.js を確認してください。");
+                    setTimeout(() => openCardModal(drop, isNew), 1500);
                 }
             }
         }
@@ -851,31 +770,39 @@
                 document.getElementById('fc-actions').classList.remove('hidden');
             }
         }
-        function rateCard(r) {
-            playSound('ok'); currentIdx++; showFcCard();
-        }
+        function rateCard(r) { playSound('ok'); currentIdx++; showFcCard(); }
 
-        // --- コレクション & モーダル ---
+        // --- コレクション & モーダル (復活版) ---
         function showCollection() {
             document.getElementById('collection-ui').classList.remove('hidden');
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
             
-            // 【修正箇所】ここも window.cardData ではなく cardData を参照
             if (typeof cardData !== 'undefined') {
                 cardData.forEach(c => {
                     const owned = userCards.includes(c.id);
                     const div = document.createElement('div');
                     div.className = `col-card ${owned ? 'r'+c.rarity : ''}`;
-                    div.style.aspectRatio = "2/3";
-                    div.style.opacity = owned ? 1 : 0.5;
-                    div.innerHTML = owned ? `<img src="${c.img}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#555;">?</div>';
+                    if(owned && userCards[userCards.length-1] === c.id) div.classList.add('new');
+
+                    let stars = "★".repeat(c.rarity);
+                    
+                    div.innerHTML = `
+                        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:0 4px;">
+                            <div style="font-size:0.6rem; color:inherit; opacity:0.8;">No.${c.id.substring(1)}</div>
+                            <div style="font-size:0.7rem; color:${owned ? '#d32f2f' : '#888'};">${stars}</div>
+                        </div>
+                        <div style="width:90%; aspect-ratio:1/1; background:#fff; border-radius:4px; overflow:hidden; border:1px solid #777; margin:5px 0; display:flex; justify-content:center; align-items:center;">
+                            ${owned ? `<img src="${c.img}" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:2rem; color:#ccc;">?</span>'}
+                        </div>
+                        <div style="font-size:0.8rem; font-weight:bold; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; width:100%; text-align:center;">
+                            ${owned ? c.name : '???'}
+                        </div>
+                    `;
                     div.onclick = () => { if(owned) openCardModal(c, false); };
                     grid.appendChild(div);
                 });
                 document.getElementById('col-count').innerText = `${userCards.length} / ${cardData.length}`;
-            } else {
-                document.getElementById('col-count').innerText = "データ読込エラー";
             }
         }
 
@@ -885,28 +812,68 @@
             document.getElementById('card-get-title').classList.toggle('hidden', !isNew);
             const view = document.getElementById('card-view-node');
             
+            // 豪華版HTML生成
+            const stars = "★".repeat(card.rarity);
+            const s = card.stats || { str:10, int:10, cha:10 };
+
             view.innerHTML = `
-                <div style="width:300px; height:460px; background:linear-gradient(135deg, #eee, #ddd); border-radius:10px; border:5px solid #d4af37; position:relative; overflow:hidden; color:#333;">
-                    <div style="background:#333; color:#fff; padding:5px; text-align:center; font-weight:bold;">${card.name}</div>
-                    <img src="${card.img}" style="width:100%; height:250px; object-fit:cover; display:block;">
-                    <div style="padding:10px; font-size:0.9rem;">
-                        <div style="font-weight:bold; margin-bottom:5px;">${card.title || '歴史の英傑'}</div>
-                        <div>${card.desc}</div>
+                <div class="flip-container" onclick="this.classList.toggle('flipped')">
+                    <div class="flipper">
+                        <div class="front">
+                            <div class="front-inner">
+                                <div class="card-bg"></div>
+                                <div class="card-top-bar"></div>
+                                <div class="group-icon">${card.group || '歴史'}</div>
+                                <div class="name-container">
+                                    <div class="card-subtitle">${card.title || '歴史人物'}</div>
+                                    <div class="card-main-name">${card.name}</div>
+                                </div>
+                                <div class="rarity-badge-star">
+                                    <svg viewBox="0 0 24 24" style="width:100%; height:100%; fill:#ffd700; stroke:#d4af37; stroke-width:1;"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/></svg>
+                                    <span class="rarity-text">${["?","N","R","SR","SSR"][card.rarity]||"N"}</span>
+                                </div>
+                                <img src="${card.img}" class="card-char-img">
+                                <div class="card-bottom-info">
+                                    <div class="stats-row">
+                                        <div class="stat-pill">⚔️ ${s.str}</div>
+                                        <div class="stat-pill">🧠 ${s.int}</div>
+                                        <div class="stat-pill">💗 ${s.cha}</div>
+                                    </div>
+                                    <div class="desc-box">${card.desc}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="bk-header">
+                                <div class="bk-name">${card.name}</div>
+                                <div style="font-size:0.8rem; color:#666;">${card.lifespan || ''}</div>
+                            </div>
+                            <div class="bk-scroll">
+                                <div class="timeline-flow">
+                                    ${(card.timeline||[]).map(t => 
+                                        `<div class="tl-item"><span class="tl-year">${t.y}</span> ${t.e}</div>`
+                                    ).join('')}
+                                </div>
+                                <div class="mne-box">
+                                    <div style="font-size:0.7rem; font-weight:bold; color:#1565c0;">覚え方</div>
+                                    <div>${card.mnemonic || '特になし'}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div style="position:absolute; bottom:10px; right:10px; font-weight:bold; font-size:1.5rem; color:#d4af37;">${"★".repeat(card.rarity)}</div>
                 </div>
             `;
         }
         function closeCardModal() { document.getElementById('card-modal').classList.add('hidden'); }
 
-        // --- 戦績分析 (簡易) ---
+        // --- 戦績分析 ---
         function showAnalysis() {
             document.getElementById('analysis-ui').classList.remove('hidden');
             const data = { v:2, s:userStats, c:userCards };
             document.getElementById('export-area').value = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
         }
 
-        // --- 並び替えゲーム (簡易版) ---
+        // --- 並び替えゲーム ---
         function startSortGame() {
             document.getElementById('sort-ui').classList.remove('hidden');
             const c = document.getElementById('sort-container');
