@@ -8,384 +8,267 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            /* --- プロ仕様カラーパレット --- */
-            --primary: #b71c1c; /* 深紅 */
-            --primary-glow: #ff5252;
-            --accent: #ffd700; /* 金箔 */
-            --accent-glow: rgba(255, 215, 0, 0.6);
-            
-            /* 背景・ガラス効果 */
-            --bg-dark: #050505;
-            --glass-bg: rgba(20, 20, 20, 0.75);
-            --text-main: #f0f0f0;
-            
-            /* カードUI用 */
-            --card-width: 300px;
-            --card-height: 460px;
-            --holo-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #a18cd1 40%, #fbc2eb 60%, #8fd3f4 80%, #ff9a9e 100%);
-            
-            /* フォント */
+            /* カラーパレット */
+            --primary: #b71c1c; --primary-glow: #ff5252; --accent: #ffd700;
+            --bg-dark: #050505; --text-main: #f0f0f0;
             --font-main: 'Shippori Mincho', serif;
+            --font-game: 'M PLUS Rounded 1c', sans-serif;
+            --color-n: #a67c52; --color-r: #c0c0c0; --color-sr: #ffd700; --color-ssr: #e0f7fa;
+            --card-width: 300px; --card-height: 460px; --menu-width: 450px;
         }
 
-        * {
-            box-sizing: border-box;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: var(--font-main);
-            background-color: var(--bg-dark);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100dvh;
-            overflow: hidden;
-            color: var(--text-main);
-            user-select: none;
-            
-            /* 背景設定 */
-            background-image: url('./assets/images/background_bg.jpg'), radial-gradient(circle at 50% 20%, #1a237e 0%, #000 70%);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            font-family: var(--font-main); background-color: var(--bg-dark); margin: 0;
+            display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden;
+            color: var(--text-main); user-select: none;
+            background-image: url('./assets/images/background_bg.jpg'), radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            background-size: cover; background-position: center;
         }
 
-        h1, h2, h3, button {
-            font-family: var(--font-main);
-            letter-spacing: 0.05em;
-        }
+        h1, h2, h3, button { font-family: var(--font-main); letter-spacing: 0.05em; }
 
-        /* --- メインラッパー --- */
         #main-wrapper {
-            width: 100%;
-            max-width: 600px;
-            height: 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            background: rgba(0,0,0,0.3); 
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            width: 100%; max-width: 600px; height: 100%; position: relative;
+            display: flex; flex-direction: column; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px); box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        /* --- 共通スクリーン --- */
         .overlay-screen {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            text-align: center;
-            transition: opacity 0.3s;
+            position: absolute; inset: 0; background: rgba(10, 10, 10, 0.95); z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; text-align: center; transition: opacity 0.3s;
         }
+        .hidden { display: none !important; }
 
-        .hidden {
-            display: none !important;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* --- タイトル & メニュー --- */
-        #mode-screen h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(183, 28, 28, 0.8);
-            margin-bottom: 40px;
-            letter-spacing: 0.2em;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 10px;
-            position: relative;
-        }
-
-        #mode-screen h1::after {
-            content: "HISTORY SAMURAI";
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.9rem;
-            color: var(--accent);
-            font-family: sans-serif;
-            letter-spacing: 0.5em;
-            opacity: 0.8;
-            white-space: nowrap;
-        }
-
-        .menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        /* 斬撃ボタン */
+        .menu-list { width: 100%; max-width: var(--menu-width); display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 10px; max-height: 80vh; }
         .slash-btn {
-            position: relative;
-            background: linear-gradient(90deg, rgba(20,20,20,0.8) 0%, rgba(50,50,50,0.4) 100%);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-left: 4px solid #555;
-            padding: 20px 25px;
-            text-align: left;
-            color: #fff;
-            font-family: var(--font-main);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: relative; background: linear-gradient(90deg, rgba(30,30,30,0.9) 0%, rgba(60,60,60,0.5) 100%);
+            border: 1px solid rgba(255,255,255,0.1); border-left: 4px solid #555; padding: 15px 20px;
+            text-align: left; color: #fff; font-family: var(--font-main); cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: transform 0.2s, background 0.3s; width: 100%;
         }
-
-        .slash-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            transition: left 0.5s;
-        }
-
-        .slash-btn:hover {
-            background: linear-gradient(90deg, rgba(183, 28, 28, 0.4) 0%, rgba(0,0,0,0.6) 100%);
-            border-left-color: var(--primary-glow);
-            padding-left: 35px;
-            text-shadow: 0 0 10px var(--primary-glow);
-            transform: translateX(5px);
-        }
-
-        .slash-btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-title { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.1em; }
-        .btn-sub { font-size: 0.7rem; color: #ccc; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
-        .btn-icon { font-size: 1.8rem; opacity: 0.5; transition: transform 0.3s; }
-        .slash-btn:hover .btn-icon { opacity: 1; transform: scale(1.2) rotate(-10deg); color: var(--accent); }
-
-        /* --- 戻るボタン等 --- */
+        .slash-btn:active { transform: scale(0.98); }
+        .slash-btn:hover { background: linear-gradient(90deg, rgba(183,28,28,0.3) 0%, rgba(0,0,0,0.8) 100%); border-left-color: var(--primary-glow); }
+        .btn-title { font-size: 1.2rem; font-weight: 700; }
+        .btn-sub { font-size: 0.7rem; color: #aaa; text-transform: uppercase; margin-top: 2px; }
+        .btn-icon { font-size: 1.5rem; opacity: 0.7; }
         .quit-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc;
-            padding: 8px 16px;
-            font-family: var(--font-main);
-            font-weight: 500;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-            transition: all 0.2s;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+            color: #eee; padding: 8px 16px; cursor: pointer; font-family: var(--font-main);
+            margin-top: 15px; z-index: 10;
         }
-        .quit-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
 
-        /* --- バトル画面 UI --- */
-        .status-bar {
-            flex: 0 0 80px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
-            z-index: 10;
-        }
-        .hp-container { width: 40%; }
-        .label { font-size: 0.9rem; font-weight: 700; color: #ddd; margin-bottom: 5px; display: block; }
-        .hp-bar {
-            height: 12px; background: #222; border: 1px solid #555;
-            transform: skewX(-20deg); overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-        .hp-fill {
-            height: 100%; width: 100%;
-            background: linear-gradient(to right, #43a047, var(--hp-fill, #2e7d32));
-            transition: width 0.4s; box-shadow: 0 0 10px #43a047;
-        }
-        #e-hp { background: linear-gradient(to right, #e53935, #b71c1c); box-shadow: 0 0 10px #b71c1c; }
-
-        #battle-stage {
-            flex: 1; position: relative; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px;
-        }
+        /* ゲーム画面 */
+        .status-bar { flex: 0 0 80px; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); }
+        .hp-bar { width: 100%; height: 10px; background: #333; border: 1px solid #555; transform: skewX(-20deg); overflow: hidden; margin-top: 5px; }
+        .hp-fill { height: 100%; transition: width 0.3s; }
+        #p-hp { background: #4caf50; width: 100%; }
+        #e-hp { background: #f44336; width: 100%; }
+        #battle-stage { flex: 1; position: relative; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px; }
         #enemy-samurai {
-            width: 280px; height: 280px;
-            background: url('./assets/images/enemy_samurai_nanobanana.png') no-repeat bottom center;
-            background-size: contain;
-            animation: sway 4s ease-in-out infinite;
-            filter: drop-shadow(0 0 30px rgba(183, 28, 28, 0.4));
-            z-index: 5;
+            width: 280px; height: 280px; background: url('./assets/images/enemy_samurai_nanobanana.png') no-repeat bottom center;
+            background-size: contain; animation: sway 4s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255,0,0,0.3));
         }
-        @keyframes sway {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-10px) scale(1.02); }
-        }
-        #slash {
-            position: absolute; top: 50%; left: 0; width: 0%; height: 5px; background: #fff;
-            box-shadow: 0 0 15px 5px #fff, 0 0 30px 10px var(--primary-glow);
-            transform: rotate(-25deg); z-index: 20; pointer-events: none;
-        }
-        .slash-anim { animation: slash-effect 0.3s cubic-bezier(0.1, 0.7, 1.0, 0.1) forwards; }
-        @keyframes slash-effect {
-            0% { width: 0%; opacity: 1; left: 10%; }
-            50% { width: 120%; opacity: 1; }
-            100% { width: 120%; opacity: 0; }
-        }
+        @keyframes sway { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+        #slash { position: absolute; top: 50%; left: 10%; width: 0%; height: 5px; background: #fff; box-shadow: 0 0 15px 5px #fff; transform: rotate(-25deg); pointer-events: none; }
+        .slash-anim { animation: slash 0.3s forwards; }
+        @keyframes slash { 0%{width:0%; opacity:1;} 50%{width:120%; opacity:1;} 100%{width:120%; opacity:0;} }
+        .ui-mid { background: rgba(0,0,0,0.85); padding: 15px; text-align: center; border-top: 1px solid #333; position: relative; }
+        #timer-gauge { width: 100%; height: 4px; background: #333; margin-bottom: 10px; position: relative; overflow: hidden; }
+        #timer-fill { width: 100%; height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 0.1s linear; }
+        #event-name { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 5px; min-height: 2rem; }
+        #hint-text { font-size: 0.9rem; color: #ffd700; min-height: 1.2rem; opacity: 0; transition: opacity 0.5s; }
+        #input-display { font-size: 3rem; font-family: 'Times New Roman', serif; letter-spacing: 0.2em; text-shadow: 0 0 10px var(--accent); margin-top: 5px;}
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px; background: #111; }
+        .key { background: #222; color: #fff; border: 1px solid #444; padding: 15px; font-size: 1.5rem; font-family: 'Times New Roman', serif; cursor: pointer; }
+        .key:active { background: #444; }
+        .key.ok { background: #b71c1c; border-color: #ff5252; }
 
-        .ui-mid {
-            background: rgba(0, 0, 0, 0.8); border-top: 1px solid rgba(255,255,255,0.2);
-            padding: 15px; text-align: center; position: relative;
-        }
-        #timer-gauge { width: 100%; height: 4px; background: #333; margin-bottom: 15px; }
-        #timer-fill { width: 100%; height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-        #event-name { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 5px; min-height: 2.5rem; }
-        #input-display {
-            font-size: 3.5rem; font-weight: 700; color: #fff; letter-spacing: 0.2em;
-            margin: 5px 0; text-shadow: 0 0 15px var(--accent-glow); font-family: 'Times New Roman', serif;
-        }
-
-        .keypad {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px;
-            background: rgba(10, 10, 10, 0.95);
-        }
-        .key {
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a); color: #eee;
-            border: 1px solid rgba(255, 255, 255, 0.1); font-family: 'Times New Roman', serif;
-            font-size: 1.8rem; padding: 15px 0; cursor: pointer; position: relative;
-        }
-        .key:active { transform: scale(0.95); background: #333; color: var(--accent); }
-        .key.ok {
-            background: linear-gradient(145deg, #d32f2f, #b71c1c); font-family: var(--font-main);
-            color: #fff; border: 1px solid #ff5252;
-        }
-
-        /* --- コレクション (豪華版) --- */
-        #collection-ui {
-            background: rgba(15, 15, 15, 0.98); display: flex; flex-direction: column; padding: 0;
-        }
-        #col-header {
-            padding: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;
-        }
+        /* コレクション */
+        #collection-ui { display: flex; flex-direction: column; background: #111; padding: 0; align-items: center; }
+        #col-header { width: 100%; max-width: var(--menu-width); padding: 15px; background: rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
         #col-grid {
-            flex: 1; overflow-y: auto; padding: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-content: start;
+            width: 100%; max-width: var(--menu-width); flex: 1; overflow-y: auto; padding: 10px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-content: start;
         }
         .col-card {
-            aspect-ratio: 2/3; background: linear-gradient(135deg, #2c2c2c, #1f1f1f);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            aspect-ratio: 2/3; background: #222; border: 2px solid #555; border-radius: 6px;
             display: flex; flex-direction: column; align-items: center; justify-content: space-around;
-            padding: 5px; cursor: pointer; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            padding: 4px; cursor: pointer; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
         }
-        .col-card.r3 { border: 1px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-        .col-card.r4 { border: 1px solid #e040fb; box-shadow: 0 0 15px rgba(224, 64, 251, 0.4); animation: pulse-border 3s infinite; }
-        @keyframes pulse-border { 50% { box-shadow: 0 0 5px #e040fb; } }
+        .col-card:active { transform: scale(0.95); }
+        .col-card.r1 { border-color: var(--color-n); background: linear-gradient(135deg, #3e2723, #1a1a1a); }
+        .col-card.r2 { border-color: var(--color-r); background: linear-gradient(135deg, #455a64, #1a1a1a); }
+        .col-card.r3 { border-color: var(--color-sr); background: linear-gradient(135deg, #5d4037, #1a1a1a); }
+        .col-card.r4 { border-color: #fff; background: linear-gradient(135deg, #4a148c, #000); animation: glow-pulse 2s infinite; }
+        .col-card-num { font-size: 0.6rem; opacity: 0.7; width: 100%; text-align: left; padding-left: 2px; }
+        .col-card-name { font-size: 0.8rem; font-weight: bold; width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .col-card.new::after {
-            content: "NEW"; position: absolute; top: -5px; right: -5px; background: #f44336;
-            color: #fff; font-size: 0.6rem; padding: 2px 4px; border-radius: 4px; font-weight: bold;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-
-        /* --- カード詳細モーダル (ホログラム & フリップ) --- */
+        /* カード詳細モーダル (カードと背景を分離) */
         #card-modal {
             position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 200;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
         }
-        .flip-container {
-            perspective: 1000px; width: var(--card-width); height: var(--card-height); margin: 20px auto; cursor: pointer;
+        #card-view-node { position: relative; z-index: 210; pointer-events: auto; }
+        #modal-close-btn { 
+            position: relative; margin-top: 20px; font-size: 1.2rem; 
+            background: rgba(183,28,28,0.8); color: #fff; border: 1px solid #ff5252; 
+            z-index: 210; 
         }
+        #modal-bg-trigger { position: absolute; inset: 0; z-index: 205; cursor: pointer; }
+
+        .flip-container { perspective: 1000px; width: var(--card-width); height: var(--card-height); cursor: pointer; }
         .flip-container.flipped .flipper { transform: rotateY(180deg); }
-        .flipper {
-            transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d;
-            position: relative; width: 100%; height: 100%;
-        }
+        .flipper { transition: 0.6s; transform-style: preserve-3d; position: relative; width: 100%; height: 100%; }
+        
         .front, .back {
-            backface-visibility: hidden; position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden;
+            backface-visibility: hidden; -webkit-backface-visibility: hidden;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); overflow: hidden;
         }
         
-        /* 表面 (ホログラム) */
-        .front {
-            z-index: 2; transform: rotateY(0deg);
-            background: linear-gradient(to bottom right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
-            background-size: 400% 400%; animation: holo-shine 6s ease infinite; padding: 6px;
+        /* --- 表面デザイン --- */
+        .front { z-index: 2; transform: rotateY(0deg); padding: 8px; background: #000; border: 6px solid #555; }
+        .front[data-rarity="1"] { border-color: var(--color-n); }
+        .front[data-rarity="2"] { border-color: var(--color-r); box-shadow: 0 0 15px rgba(192,192,192,0.3); }
+        .front[data-rarity="3"] { border-color: var(--color-sr); box-shadow: 0 0 20px rgba(255,215,0,0.5); }
+        .front[data-rarity="4"] { 
+            border: 6px solid transparent;
+            background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #a18cd1 40%, #fbc2eb 60%, #8fd3f4 80%, #ff9a9e 100%); 
+            background-origin: border-box; background-clip: content-box, border-box;
+            box-shadow: 0 0 30px rgba(224,247,250, 0.6);
+            animation: holo-shine 6s ease infinite;
         }
         @keyframes holo-shine { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+
+        .front-inner { width: 100%; height: 100%; background: #fff; border-radius: 10px; position: relative; border: 2px solid #000; overflow: hidden; display: flex; flex-direction: column; }
+        .card-bg { position: absolute; inset: 0; background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 50%, #4FC3F7 50%, #0288D1 100%); z-index: 0; }
+        .card-header { position: absolute; top:0; left:0; width:100%; height:80px; z-index:10; }
+        .era-badge { position: absolute; top:-5px; left:-5px; width:70px; height:70px; background:#2196f3; border:2px solid #fff; clip-path:polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%); display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; font-family:var(--font-game); font-weight:900; z-index:20; padding-bottom:5px; line-height:1; }
+        .era-icon{font-size:1.5rem; margin-bottom:2px;} .era-text{font-size:0.7rem;}
+        .name-container { position: absolute; top: 5px; left: 65px; right: 65px; text-align: center; z-index: 15; }
+        .card-title { display: inline-block; background: rgba(0,0,0,0.7); color: #fff; font-size: 0.6rem; padding: 2px 8px; border-radius: 10px; font-weight: bold; margin-bottom: 2px; }
+        .card-name { font-family: var(--font-game); font-size: 1.6rem; font-weight: 900; color: #fff; -webkit-text-stroke: 1px #000; text-shadow: 2px 2px 0 #000; white-space: nowrap; }
+        .rarity-star { position: absolute; top: 5px; right: 5px; width: 60px; height: 60px; z-index: 20; display: flex; align-items: center; justify-content: center; }
+        .star-svg { width: 100%; height: 100%; fill: #ffd700; stroke: #d4af37; stroke-width: 2px; drop-shadow: 2px 2px 2px rgba(0,0,0,0.5); }
+        .rarity-text { position: absolute; font-family: var(--font-game); font-weight: 900; font-size: 1rem; color: #fff; text-shadow: 1px 1px 0 #000; transform: rotate(15deg); }
+        .card-char-img { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-height: 65%; object-fit: contain; z-index: 5; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.4)); }
+        .card-no { position: absolute; bottom: 95px; right: 5px; background: #000; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; z-index: 6; font-family: sans-serif; }
+        .card-bottom { position: absolute; bottom: 0; width: 100%; height: 90px; background: rgba(0,0,0,0.85); color: #fff; padding: 5px; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; }
+        .stats-row { display: flex; justify-content: space-around; align-items: center; margin-top: -15px; }
+        .stat-pill { background: #333; border: 2px solid #fff; border-radius: 15px; padding: 2px 8px; font-family: var(--font-game); font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .stat-pill.str { background: #5d4037; border-color: #ffca28; } .stat-pill.int { background: #1a237e; border-color: #42a5f5; } .stat-pill.cha { background: #880e4f; border-color: #f48fb1; }
+        .desc-box { font-size: 0.75rem; line-height: 1.3; text-align: left; padding: 0 5px 5px 5px; }
+
+        /* --- 裏面デザイン (添付画像再現) --- */
+        .back { 
+            transform: rotateY(180deg); 
+            background: #fffdf0; /* クリーム色 */
+            color: #333; 
+            border: 8px solid #fff; 
+            outline: 2px solid #d4af37; outline-offset: -6px; /* 金の縁取り */
+            padding: 15px; 
+            display: flex; flex-direction: column; 
+            font-family: var(--font-game);
+            position: relative;
+        }
+        /* 四隅の飾り (疑似要素で再現) */
+        .back::before, .back::after {
+            content: ''; position: absolute; width: 15px; height: 15px;
+            border: 2px solid #d4af37; pointer-events: none;
+        }
+        .back::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .back::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        .back-header { 
+            text-align: center; padding-bottom: 5px; border-bottom: 1px solid #d4af37; margin-bottom: 10px;
+        }
+        .bk-name { font-size: 1.3rem; font-weight: 900; }
+        .bk-kana { font-size: 0.8rem; font-weight: bold; }
+        .bk-life { font-size: 0.9rem; margin-top: 2px; }
+
+        .back-content { flex: 1; overflow-y: auto; text-align: left; font-size: 0.8rem; }
         
-        .front-inner {
-            width: 100%; height: 100%; background: #fff; border-radius: 9px; position: relative;
-            display: flex; flex-direction: column; border: 2px solid #000; overflow: hidden;
+        /* 年表スタイル (黒カプセル + 線) */
+        .timeline-flow { 
+            margin: 5px 0 10px 10px; 
+            border-left: 2px solid #333; /* 縦線 */
+            padding-left: 15px; 
+            display: flex; flex-direction: column; gap: 8px;
         }
-        .card-bg { position: absolute; inset: 0; background: linear-gradient(to bottom, #87CEEB, #E0F7FA); z-index: 0; }
-        .card-char-img {
-            position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
-            width: 90%; height: 60%; object-fit: contain; z-index: 1; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+        .tl-row { position: relative; }
+        .tl-year { 
+            display: inline-block; background: #000; color: #fff; 
+            padding: 1px 8px; border-radius: 10px; font-weight: bold; font-size: 0.8rem;
+            position: relative; left: -25px; /* 線の上に配置 */
         }
-        .card-top-bar { position: absolute; top: 0; width: 100%; height: 80px; z-index: 10; }
-        .group-icon {
-            position: absolute; top: 5px; left: 5px; width: 40px; height: 40px; background: #0d47a1;
-            color: #fff; border: 2px solid #fff; display: flex; justify-content: center; align-items: center;
-            font-size: 0.6rem; z-index: 20; box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: bold;
+        .tl-event { font-weight: bold; display: block; margin-top: 2px; line-height: 1.2; }
+        
+        /* 矢印 (疑似要素) */
+        .tl-row:not(:last-child)::after {
+            content: '↓'; position: absolute; left: -21px; bottom: -12px; font-size: 0.8rem; color: #333; background: #fffdf0;
         }
-        .name-container {
-            position: absolute; top: 10px; width: 100%; text-align: center; z-index: 15;
-        }
-        .card-subtitle {
-            font-size: 0.6rem; background: rgba(255,255,255,0.8); padding: 0 4px; border-radius: 4px; display: inline-block;
-        }
-        .card-main-name {
-            font-size: 1.6rem; font-weight: 900; color: #000; text-shadow: 2px 2px 0 #fff; margin-top: 2px;
-        }
-        .rarity-badge-star {
-            position: absolute; top: 5px; right: 5px; width: 45px; height: 45px; z-index: 20;
-        }
-        .rarity-text {
-            position: absolute; top: 12px; right: 12px; font-weight: 900; color: #fff; font-size: 1rem; text-shadow: 1px 1px 0 #000;
-        }
-        .card-bottom-info {
-            position: absolute; bottom: 0; width: 100%; padding: 8px; background: rgba(0,0,0,0.85);
-            color: #fff; z-index: 10;
-        }
-        .stats-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 5px; }
-        .stat-pill {
-            font-size: 0.7rem; padding: 2px 6px; border-radius: 8px; border: 1px solid #777; background: #333;
-        }
-        .desc-box { font-size: 0.7rem; line-height: 1.3; text-align: justify; opacity: 0.9; }
 
-        /* 裏面 (古文書風) */
-        .back {
-            transform: rotateY(180deg); z-index: 1; background: #fdfbf7; border: 6px solid #fdfbf7;
-            outline: 2px solid #d4af37; outline-offset: -4px; color: #333; padding: 15px; display: flex; flex-direction: column;
-        }
-        .bk-header { text-align: center; border-bottom: 2px solid #d4af37; padding-bottom: 5px; margin-bottom: 10px; }
-        .bk-name { font-size: 1.2rem; font-weight: bold; }
-        .bk-scroll { flex: 1; overflow-y: auto; font-size: 0.85rem; }
-        .timeline-flow { border-left: 2px solid #ccc; margin: 10px 0 10px 10px; padding-left: 10px; }
-        .tl-item { margin-bottom: 8px; position: relative; }
-        .tl-year { font-weight: bold; background: #333; color: #fff; padding: 1px 4px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; }
-        .mne-box { background: #e3f2fd; border: 1px dashed #2196f3; padding: 8px; border-radius: 5px; margin-top: 10px; }
+        /* キーワード */
+        .bk-section-title { font-weight: bold; margin-top: 10px; color: #555; font-size: 0.8rem; }
+        .kw-box { display: flex; flex-wrap: wrap; gap: 10px; font-weight: bold; color: #333; margin-top: 2px; }
+        .kw-item::before { content: "・"; }
 
-        /* 汎用ボタン */
-        .select-btn {
-            background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 20px; font-size: 1.1rem; font-family: var(--font-main); cursor: pointer; position: relative;
+        /* 語呂合わせ (顔アイコン付きボックス) */
+        .memo-box { 
+            background: #fff; border: 1px solid #ccc; border-radius: 6px; 
+            padding: 8px; margin-top: 10px; display: flex; gap: 8px; align-items: center;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
         }
-        .select-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--accent); color: var(--accent); }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
-        .full-width { grid-column: span 2; }
+        .memo-icon { 
+            width: 40px; height: 40px; border-radius: 4px; overflow: hidden; background: #2196f3;
+            display: flex; justify-content: center; align-items: center; font-size: 1.5rem; flex-shrink: 0;
+        }
+        .memo-text-area { display: flex; flex-direction: column; }
+        .memo-label { font-size: 0.7rem; font-weight: bold; color: #555; }
+        .memo-body { font-weight: bold; font-size: 0.85rem; line-height: 1.2; }
+
+        /* 相関図 */
+        .rel-diagram { 
+            display: flex; justify-content: center; align-items: center; gap: 5px; 
+            margin-top: 15px; border: 1px solid #d4af37; padding: 5px; border-radius: 6px; background: #fff;
+        }
+        .rel-box { 
+            border: 1px solid #333; padding: 2px 4px; font-size: 0.65rem; border-radius: 3px; 
+            background: #fff; font-weight: bold;
+        }
+        .rel-box.main { background: #000; color: #fff; }
+        .rel-arrow { font-size: 0.6rem; display: flex; flex-direction: column; align-items: center; color: #333; }
+
+        #sort-ui { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
+        #sort-header { width: 100%; max-width: var(--menu-width); padding: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
+        #sort-container { width: 100%; max-width: var(--menu-width); flex: 1; overflow-y: auto; padding: 15px 0; position: relative; scroll-behavior: smooth; }
+        .sort-item { width: 100%; background: linear-gradient(90deg, #222, #333); padding: 20px; margin-bottom: 10px; border-radius: 4px; border-left: 5px solid #555; cursor: grab; text-align: left; font-size: 1.2rem; color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.5); touch-action: pan-y; user-select: none; transition: transform 0.2s, opacity 0.2s; position: relative; }
+        .sort-item.dragging { opacity: 0; }
+        .sort-placeholder { width: 100%; height: 60px; background: rgba(255, 215, 0, 0.1); border: 2px dashed var(--accent); border-radius: 4px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 0.8rem; }
+        .sort-placeholder::after { content: "ここに配置"; }
+        .drag-ghost { position: fixed; pointer-events: none; z-index: 9999; width: 300px; background: #333; padding: 20px; border-left: 5px solid var(--accent); color: #fff; border-radius: 4px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0.9; transform: scale(1.05); }
+        .sort-item.correct { border-left-color: #4caf50; background: #1b5e20; } .sort-item.wrong { border-left-color: #f44336; background: #b71c1c; }
+
+        #analysis-ui { width: 100%; height: 100%; overflow-y: auto; padding: 20px; background: rgba(0,0,0,0.9); display: flex; flex-direction: column; align-items: center; }
+        .analysis-content { width: 100%; max-width: var(--menu-width); }
+        .era-row { display: flex; align-items: center; margin-bottom: 10px; background: #222; padding: 10px; border-radius: 5px; width: 100%; }
+        .era-name { width: 60px; font-weight: bold; }
+        .era-graph { flex: 1; height: 10px; background: #444; margin: 0 10px; border-radius: 5px; overflow: hidden; }
+        .era-bar { height: 100%; background: var(--accent); width: 0%; transition: width 1s; }
+        .era-rank { width: 30px; font-weight: bold; text-align: right; }
+        .data-box { background: #222; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #444; }
+        #export-area, #import-area { width: 100%; height: 60px; background: #111; color: #fff; border: 1px solid #555; padding: 5px; font-family: monospace; }
+        .select-btn { background: rgba(255,255,255,0.1); width: 100%; padding: 15px; margin-bottom: 10px; color: #fff; border: 1px solid #555; cursor: pointer; font-size: 1rem; }
 
     </style>
 </head>
@@ -395,186 +278,129 @@
     <div id="main-wrapper">
         <div id="mode-screen" class="overlay-screen">
             <h1>歴史無双</h1>
-            
             <div class="menu-list">
-                <button class="slash-btn" onclick="selectMode('battle')">
-                    <div>
-                        <div class="btn-title">真剣勝負</div>
-                        <div class="btn-sub">Battle Mode</div>
-                    </div>
-                    <div class="btn-icon">⚔️</div>
-                </button>
-
-                <button class="slash-btn" onclick="selectMode('flash')">
-                    <div>
-                        <div class="btn-title">暗記特訓</div>
-                        <div class="btn-sub">Flash Cards</div>
-                    </div>
-                    <div class="btn-icon">🎴</div>
-                </button>
-
-                <button class="slash-btn" onclick="selectMode('sort')">
-                    <div>
-                        <div class="btn-title">時代整列</div>
-                        <div class="btn-sub">Timeline Sort</div>
-                    </div>
-                    <div class="btn-icon">📜</div>
-                </button>
-
-                <button class="slash-btn" onclick="selectMode('collection')">
-                    <div>
-                        <div class="btn-title">宝物庫</div>
-                        <div class="btn-sub">Collection</div>
-                    </div>
-                    <div class="btn-icon">💎</div>
-                </button>
-
-                <button class="slash-btn" style="border-left-color: #555;" onclick="selectMode('analysis')">
-                    <div>
-                        <div class="btn-title">戦績・記録</div>
-                        <div class="btn-sub">Data & Records</div>
-                    </div>
-                    <div class="btn-icon">📊</div>
-                </button>
-            </div>
-            
-            <div style="margin-top:30px; font-size:0.7rem; color:rgba(255,255,255,0.3); font-family:sans-serif; letter-spacing: 0.1em;">
-                AUTO SAVE ENABLED
+                <button class="slash-btn" onclick="selectMode('battle')"><div><div class="btn-title">真剣勝負</div><div class="btn-sub">Battle Mode</div></div><div class="btn-icon">⚔️</div></button>
+                <button class="slash-btn" onclick="selectMode('flash')"><div><div class="btn-title">暗記特訓</div><div class="btn-sub">Flash Cards</div></div><div class="btn-icon">🎴</div></button>
+                <button class="slash-btn" onclick="selectMode('sort')"><div><div class="btn-title">時代整列</div><div class="btn-sub">Timeline Sort</div></div><div class="btn-icon">📜</div></button>
+                <button class="slash-btn" onclick="selectMode('collection')"><div><div class="btn-title">宝物庫</div><div class="btn-sub">Collection</div></div><div class="btn-icon">💎</div></button>
+                <button class="slash-btn" style="border-left-color: #888;" onclick="selectMode('analysis')"><div><div class="btn-title">戦績・記録</div><div class="btn-sub">Data & Records</div></div><div class="btn-icon">📊</div></button>
             </div>
         </div>
 
         <div id="era-screen" class="overlay-screen hidden">
-            <h2 style="font-size:2rem; margin-bottom:30px; text-shadow:0 0 10px #000;">出陣する時代を選べ</h2>
-            <div class="btn-grid">
-                <button class="select-btn full-width" onclick="selectEra('all')" style="border-color:var(--accent);">全時代 (総力戦)</button>
-                <button class="select-btn" onclick="selectEra('古代')">古代<br><span style="font-size:0.8rem; opacity:0.7">弥生~平安</span></button>
-                <button class="select-btn" onclick="selectEra('中世')">中世<br><span style="font-size:0.8rem; opacity:0.7">鎌倉~室町</span></button>
-                <button class="select-btn" onclick="selectEra('近世')">近世<br><span style="font-size:0.8rem; opacity:0.7">安土~江戸</span></button>
-                <button class="select-btn" onclick="selectEra('近代')">近代<br><span style="font-size:0.8rem; opacity:0.7">明治~戦前</span></button>
-                <button class="select-btn full-width" onclick="selectEra('現代')">現代<br><span style="font-size:0.8rem; opacity:0.7">戦後~令和</span></button>
+            <h2 style="margin-bottom:20px;">時代を選べ</h2>
+            <div class="menu-list">
+                <button class="slash-btn" style="border-left-color:var(--accent);" onclick="selectEra('all')"><div><div class="btn-title">全時代</div><div class="btn-sub">All Eras</div></div></button>
+                <button class="slash-btn" onclick="selectEra('古代')"><div><div class="btn-title">古代</div><div class="btn-sub">弥生~平安</div></div></button>
+                <button class="slash-btn" onclick="selectEra('中世')"><div><div class="btn-title">中世</div><div class="btn-sub">鎌倉~室町</div></div></button>
+                <button class="slash-btn" onclick="selectEra('近世')"><div><div class="btn-title">近世</div><div class="btn-sub">安土~江戸</div></div></button>
+                <button class="slash-btn" onclick="selectEra('近代')"><div><div class="btn-title">近代</div><div class="btn-sub">明治~戦前</div></div></button>
+                <button class="slash-btn" onclick="selectEra('現代')"><div><div class="btn-title">現代</div><div class="btn-sub">戦後~令和</div></div></button>
             </div>
-            <button class="quit-btn" style="margin-top:30px;" onclick="location.reload()">戻る</button>
+            <button class="quit-btn" onclick="location.reload()">戻る</button>
         </div>
 
         <div id="diff-screen" class="overlay-screen hidden">
-            <h2 style="font-size:2rem; margin-bottom:30px;">戦法を選択</h2>
-            <div class="btn-grid">
-                <button class="select-btn full-width" onclick="startBattle('normal')">通常実戦<br><span style="font-size:0.8rem; opacity:0.7">ランダムに出題</span></button>
-                <button class="select-btn full-width" onclick="startBattle('weak')" style="background:rgba(100,0,0,0.3); border-color:#e57373;">
-                    苦手克服<br><span style="font-size:0.8rem; opacity:0.7">間違えた問題のみ</span>
-                    <div id="weak-badge" style="position:absolute; top:10px; right:10px; background:red; padding:2px 6px; border-radius:50%; font-size:0.8rem;">0</div>
+            <h2 style="margin-bottom:20px;">戦法を選択</h2>
+            <div class="menu-list">
+                <button class="slash-btn" onclick="startBattle('normal')"><div><div class="btn-title">通常実戦</div><div class="btn-sub">Standard</div></div><div class="btn-icon">⚔️</div></button>
+                <button class="slash-btn" style="border-left-color:#e53935; background:linear-gradient(90deg, rgba(100,0,0,0.6), rgba(0,0,0,0.8));" onclick="startBattle('weak')">
+                    <div><div class="btn-title">苦手克服</div><div class="btn-sub">Weakness Training</div></div><div class="btn-icon">🔥</div>
+                    <div id="weak-badge" style="background:red; padding:2px 8px; border-radius:10px; font-size:0.8rem; font-weight:bold; margin-left:10px;">0</div>
                 </button>
             </div>
-            <button class="quit-btn" style="margin-top:30px;" onclick="location.reload()">戻る</button>
+            <button class="quit-btn" onclick="location.reload()">戻る</button>
         </div>
 
         <div id="game-ui" class="hidden" style="height:100%; display:flex; flex-direction:column;">
             <div class="status-bar">
-                <div class="hp-container">
-                    <span class="label">YOU</span>
-                    <div class="hp-bar"><div id="p-hp" class="hp-fill"></div></div>
-                </div>
-                <button class="quit-btn" onclick="location.reload()">撤退</button>
-                <div class="hp-container" style="text-align:right;">
-                    <span class="label">ENEMY</span>
-                    <div class="hp-bar" style="border-color:#b71c1c;"><div id="e-hp" class="hp-fill"></div></div>
-                </div>
+                <div style="width:40%">YOU<div class="hp-bar"><div id="p-hp" class="hp-fill"></div></div></div>
+                <button class="quit-btn" style="margin:0; padding:5px 10px;" onclick="location.reload()">逃げる</button>
+                <div style="width:40%; text-align:right;">ENEMY<div class="hp-bar"><div id="e-hp" class="hp-fill"></div></div></div>
             </div>
-            
             <div id="battle-stage">
                 <div id="slash"></div>
                 <div id="enemy-samurai"></div>
             </div>
-
             <div class="ui-mid">
                 <div id="timer-gauge"><div id="timer-fill"></div></div>
                 <div id="event-name">出陣</div>
-                <div id="hint-text" style="color:var(--accent); min-height:1.2rem; font-size:0.9rem; opacity:0;">💡 ヒント</div>
+                <div id="hint-text">💡 ヒント</div>
                 <div id="input-display">____</div>
             </div>
-
             <div class="keypad">
-                <button class="key" onclick="tapNum(1)">1</button>
-                <button class="key" onclick="tapNum(2)">2</button>
-                <button class="key" onclick="tapNum(3)">3</button>
-                <button class="key" onclick="tapNum(4)">4</button>
-                <button class="key" onclick="tapNum(5)">5</button>
-                <button class="key" onclick="tapNum(6)">6</button>
-                <button class="key" onclick="tapNum(7)">7</button>
-                <button class="key" onclick="tapNum(8)">8</button>
-                <button class="key" onclick="tapNum(9)">9</button>
-                <button class="key" onclick="tapClear()" style="color:#aaa;">C</button>
-                <button class="key" onclick="tapNum(0)">0</button>
-                <button class="key ok" onclick="tapOk()">斬</button>
+                <button class="key" onclick="tapNum(1)">1</button><button class="key" onclick="tapNum(2)">2</button><button class="key" onclick="tapNum(3)">3</button>
+                <button class="key" onclick="tapNum(4)">4</button><button class="key" onclick="tapNum(5)">5</button><button class="key" onclick="tapNum(6)">6</button>
+                <button class="key" onclick="tapNum(7)">7</button><button class="key" onclick="tapNum(8)">8</button><button class="key" onclick="tapNum(9)">9</button>
+                <button class="key" onclick="tapClear()">C</button><button class="key" onclick="tapNum(0)">0</button><button class="key ok" onclick="tapOk()">斬</button>
             </div>
         </div>
 
-        <div id="flash-ui" class="overlay-screen hidden" style="background:#111;">
-            <div id="fc-progress" style="margin-bottom:20px; color:#888;">0 / 0</div>
-            <button id="fc-close-btn" class="quit-btn" style="position:absolute; top:20px; right:20px;" onclick="location.reload()">終了</button>
-            
-            <div id="fc-card" onclick="nextFcStep()" style="
-                width: 90%; height: 50%; 
-                background: #eee; color: #111; 
-                border-radius: 8px; 
-                display: flex; flex-direction: column; align-items: center; justify-content: center; 
-                padding: 20px; cursor: pointer; 
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #fff;">
-                
-                <p id="fc-year" style="font-size:4rem; font-weight:700; margin:0; font-family:'Times New Roman';">----</p>
-                <p id="fc-goro" class="hidden" style="font-size:1.5rem; color:var(--primary); font-weight:700; margin:20px 0;">ゴロ</p>
-                <p id="fc-event" class="hidden" style="font-size:1.4rem; font-weight:700;">出来事</p>
-                <p id="fc-msg" style="font-size:0.8rem; color:#666; margin-top:auto;">タップで正解を見る</p>
+        <div id="flash-ui" class="overlay-screen hidden">
+            <div id="fc-card" onclick="nextFcStep()" style="width:90%; height:60%; background:#fff; color:#000; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
+                <h1 id="fc-year" style="font-size:4rem; margin:0;">----</h1>
+                <h2 id="fc-goro" class="hidden" style="color:#b71c1c;">ゴロ</h2>
+                <div id="fc-event" class="hidden" style="font-size:1.5rem; font-weight:bold;">出来事</div>
+                <div style="margin-top:auto; font-size:0.8rem; color:#888;">タップで進む</div>
             </div>
-
-            <div id="fc-actions" class="hidden" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; width:90%; margin-top:20px;">
-                <button class="select-btn" style="background:#2e7d32; padding:15px;" onclick="rateCard('memo')">覚えた</button>
-                <button class="select-btn" style="background:#1565c0; padding:15px;" onclick="rateCard('normal')">普通</button>
-                <button class="select-btn" style="background:#c62828; padding:15px;" onclick="rateCard('weak')">苦手</button>
+            <div id="fc-actions" class="hidden" style="margin-top:20px; width:90%; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+                <button class="select-btn" style="background:#4caf50;" onclick="rateCard('memo')">覚えた</button>
+                <button class="select-btn" style="background:#2196f3;" onclick="rateCard('normal')">普通</button>
+                <button class="select-btn" style="background:#f44336;" onclick="rateCard('weak')">苦手</button>
             </div>
+            <button class="quit-btn" style="position:absolute; top:20px; right:20px;" onclick="location.reload()">終了</button>
         </div>
 
-        <div id="collection-ui" class="overlay-screen hidden">
+        <div id="collection-ui" class="overlay-screen hidden" style="padding:0; justify-content:start;">
             <div id="col-header">
-                <button class="quit-btn" onclick="location.reload()">戻る</button>
-                <span style="font-size:1.2rem; font-weight:bold;">宝物庫</span>
-                <span id="col-count" style="font-size:0.9rem; color:#aaa;">0/0</span>
+                <button class="quit-btn" style="margin:0;" onclick="location.reload()">戻る</button>
+                <span>宝物庫</span>
+                <span id="col-count">0/0</span>
             </div>
             <div id="col-grid"></div>
         </div>
 
-        <div id="card-modal" class="hidden" onclick="closeCardModal()">
-            <div class="card-get-title hidden" id="card-get-title" style="font-size:2.5rem; color:var(--accent); margin-bottom:20px; text-shadow:0 0 20px var(--accent);">お宝発見！</div>
-            <div id="card-view-node"></div> <p style="color:#fff; margin-top:20px; font-size:0.8rem; opacity:0.7;">タップして閉じる</p>
+        <div id="card-modal" class="hidden">
+            <h2 id="card-get-title" class="hidden" style="color:#ffd700; text-shadow:0 0 10px #ff0000; font-size:2.5rem; margin-bottom:20px; z-index:210;">お宝発見！</h2>
+            <div id="card-view-node"></div>
+            <button id="modal-close-btn" class="quit-btn" onclick="closeCardModal()">閉じる</button>
+            <p style="color:#fff; margin-top:10px; font-size:0.8rem; z-index:210;">カードをタップで裏返す</p>
+            <div id="modal-bg-trigger" onclick="closeCardModal()"></div>
         </div>
 
-        <div id="result-screen" class="overlay-screen hidden">
-            <h1 id="res-title" style="font-size:3rem; margin-bottom:10px;"></h1>
-            <p id="res-msg" style="font-size:1.2rem; margin-bottom:30px;"></p>
-            <button class="slash-btn" style="width:100%; justify-content:center;" onclick="location.reload()">
-                <span class="btn-title">TOPへ戻る</span>
-            </button>
+        <div id="sort-ui" class="overlay-screen hidden">
+             <div id="sort-header">
+                <button class="quit-btn" style="margin:0;" onclick="location.reload()">中断</button>
+                <span>時代を並べ替えよ</span>
+                <button class="quit-btn" style="margin:0; border-color:var(--accent); color:var(--accent);" onclick="checkSortOrder()">判定</button>
+            </div>
+            <div id="sort-container"></div>
         </div>
 
         <div id="analysis-ui" class="overlay-screen hidden">
-             <div class="analysis-header" style="width:100%; display:flex; justify-content:space-between; margin-bottom:20px;">
+             <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:20px; max-width: var(--menu-width);">
                 <h2>戦績分析</h2>
-                <button class="quit-btn" onclick="location.reload()">閉じる</button>
+                <button class="quit-btn" style="margin:0;" onclick="location.reload()">閉じる</button>
             </div>
-            <div id="analysis-container" style="width:100%;"></div>
-            <div style="margin-top:20px; width:100%;">
-                <p style="font-size:0.8rem; color:#aaa;">データ移行コード</p>
-                <textarea id="export-area" readonly onclick="this.select()" style="width:100%; background:#111; color:#fff; border:1px solid #333; height:50px;"></textarea>
+            <div id="analysis-container" class="analysis-content"></div>
+            <div class="analysis-content" style="margin-top:20px;">
+                <div class="data-box">
+                    <p style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">データ引継ぎ</p>
+                    <textarea id="export-area" readonly onclick="this.select()"></textarea>
+                    <button class="select-btn" style="margin-top:5px; padding:8px; font-size:0.9rem;" onclick="copyData()">コードをコピー</button>
+                </div>
+                <div class="data-box">
+                    <p style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">データ復元</p>
+                    <textarea id="import-area" placeholder="ここにコードを貼り付け"></textarea>
+                    <button class="select-btn" style="margin-top:5px; padding:8px; font-size:0.9rem; border-color:var(--accent); color:var(--accent);" onclick="importData()">データを復元</button>
+                </div>
             </div>
         </div>
-        
-        <div id="sort-ui" class="overlay-screen hidden" style="padding:0;">
-            <div style="width:100%; padding:15px; background:rgba(0,0,0,0.8); display:flex; justify-content:space-between; align-items:center; z-index:10;">
-                <button class="quit-btn" onclick="location.reload()">中断</button>
-                <span style="font-size:1rem;">古い順に並べよ</span>
-                <button class="select-btn" style="padding:5px 15px; font-size:0.9rem; border-color:var(--accent); color:var(--accent);" onclick="checkSortOrder()">判定</button>
-            </div>
-            <div id="sort-container" style="flex:1; width:100%; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:8px;"></div>
+
+        <div id="result-screen" class="overlay-screen hidden">
+            <h1 id="res-title"></h1>
+            <p id="res-msg"></p>
+            <button class="quit-btn" onclick="location.reload()">TOPへ</button>
         </div>
 
     </div>
@@ -583,312 +409,359 @@
     <script src="cards.js"></script>
 
     <script>
-        /* =========================================
-           統合版 JavaScript ロジック
-           ========================================= */
         const STORAGE_KEY = 'history_game_v1';
         let userStats = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
         const CARD_STORAGE_KEY = 'history_game_cards_v1';
         let userCards = JSON.parse(localStorage.getItem(CARD_STORAGE_KEY)) || [];
 
-        function getStat(id) {
-            if (!userStats[id]) userStats[id] = { w: 0, s: 0, f: 0 };
-            return userStats[id];
-        }
+        function getStat(id) { if (!userStats[id]) userStats[id] = { w: 0, s: 0, f: 0 }; return userStats[id]; }
         function saveStat(id, isCorrect, type = 'battle') {
             const s = getStat(id);
-            if (type === 'battle') {
-                if (isCorrect) s.s++; else { s.w++; s.s = 0; }
-            }
+            if (type === 'battle') { if (isCorrect) s.s++; else { s.w++; s.s = 0; } }
             localStorage.setItem(STORAGE_KEY, JSON.stringify(userStats));
         }
 
-        // --- 音声エンジン ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
-
-        function playTone(type, freq, duration, vol = 0.1) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+        function playTone(type, freq, dur) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
+            const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + dur);
         }
-
         function playSound(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            switch (type) {
-                case 'key': playTone('sine', 800, 0.05, 0.05); break;
-                case 'ok': playTone('sine', 1200, 0.1, 0.1); setTimeout(() => playTone('sine', 1800, 0.2, 0.1), 100); break;
-                case 'slash': 
-                    playTone('sawtooth', 600, 0.1, 0.1); 
-                    setTimeout(() => playTone('sawtooth', 100, 0.2, 0.1), 50);
-                    break;
-                case 'damage': playTone('square', 100, 0.3, 0.2); break;
+            if(type==='key') { 
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            }
+            if(type==='slash') { 
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            }
+            if(type==='damage') { playTone('square',100,0.3); }
+            if(type==='ok') { 
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(2000, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
             }
         }
 
-        let mode = '', selectedEra = '', playerHp = 100, enemyHp = 100;
-        let currentIdx = 0, quizList = [], userInput = "", timerInterval, fcStep = 0;
-
-        window.onload = function () {
-            if (typeof masterData !== 'undefined') {
-                masterData.forEach((d, i) => d.id = i);
-            }
-        };
+        let mode='', selectedEra='', playerHp=100, enemyHp=100, currentIdx=0, quizList=[], userInput="", timerInterval;
 
         function selectMode(m) {
-            playSound('ok'); mode = m;
+            mode=m;
             document.getElementById('mode-screen').classList.add('hidden');
-            if (mode === 'sort') startSortGame();
-            else if (mode === 'analysis') showAnalysis();
-            else if (mode === 'collection') showCollection();
+            if(m==='collection') showCollection();
+            else if(m==='sort') startSortGame();
+            else if(m==='analysis') showAnalysis();
             else document.getElementById('era-screen').classList.remove('hidden');
         }
 
         function selectEra(era) {
-            playSound('ok'); selectedEra = era;
+            selectedEra=era;
             document.getElementById('era-screen').classList.add('hidden');
-            if (mode === 'battle') {
-                const weakCount = masterData.filter(q => (era === 'all' || q.era === era) && getStat(q.id).w > 0).length;
-                document.getElementById('weak-badge').innerText = weakCount;
-                if(weakCount === 0) document.getElementById('weak-badge').classList.add('hidden');
+            if(mode==='battle') {
+                let data = (typeof masterData !== 'undefined') ? masterData : [];
+                const weakCount = data.filter(q => (era === 'all' || q.era === era) && getStat(q.id).w > 0).length;
+                const badge = document.getElementById('weak-badge');
+                badge.innerText = weakCount;
+                badge.style.display = weakCount > 0 ? 'inline-block' : 'none';
                 document.getElementById('diff-screen').classList.remove('hidden');
-            } else { startFlash(); }
+            }
+            else startFlash();
         }
 
-        // --- バトル ---
         function startBattle(type) {
-            playSound('ok');
             document.getElementById('diff-screen').classList.add('hidden');
             document.getElementById('game-ui').classList.remove('hidden');
-
-            let baseList = masterData.filter(q => (selectedEra === 'all' || q.era === selectedEra));
-            if (type === 'weak') {
-                quizList = baseList.filter(q => { const s = getStat(q.id); return s.w > 0 && s.s < 3; });
-                if (quizList.length === 0) { alert("苦手の記録がありません！"); location.reload(); return; }
-            } else {
-                quizList = baseList.sort(() => Math.random() - 0.5).slice(0, 10);
-            }
-            playerHp = 100; enemyHp = 100; currentIdx = 0;
-            updateHpUI(); showQuestion();
+            let data = (typeof masterData !== 'undefined') ? masterData : [];
+            let baseList = data.filter(q=>(selectedEra==='all'||q.era===selectedEra));
+            if(type === 'weak') {
+                quizList = baseList.filter(q => getStat(q.id).w > 0 && getStat(q.id).s < 3);
+                if(quizList.length === 0) { alert("苦手の記録がありません！"); location.reload(); return; }
+                quizList.sort((a,b) => getStat(b.id).w - getStat(a.id).w);
+            } else { quizList = baseList.sort(()=>Math.random()-0.5); }
+            quizList = quizList.slice(0,10);
+            playerHp=100; enemyHp=100; currentIdx=0;
+            updateHp(); showQ();
         }
-
-        function updateHpUI() {
-            document.getElementById('p-hp').style.width = Math.max(0, playerHp) + "%";
-            document.getElementById('e-hp').style.width = Math.max(0, enemyHp) + "%";
-        }
-        function showQuestion() {
-            if (playerHp <= 0 || enemyHp <= 0 || currentIdx >= quizList.length) { endGame(); return; }
-            userInput = ""; renderInput();
-            document.getElementById('input-display').style.color = "#fff";
+        function updateHp(){ document.getElementById('p-hp').style.width=Math.max(0,playerHp)+"%"; document.getElementById('e-hp').style.width=Math.max(0,enemyHp)+"%"; }
+        function showQ(){
+            if(playerHp<=0 || enemyHp<=0 || currentIdx>=quizList.length) { endGame(); return; }
+            userInput=""; document.getElementById('input-display').innerText="____";
+            document.getElementById('input-display').style.color="#fff";
             document.getElementById('event-name').innerText = quizList[currentIdx].e;
-            document.getElementById('hint-text').innerText = quizList[currentIdx].h;
-            document.getElementById('hint-text').style.opacity = 0;
-            startTimer();
+            const hint = document.getElementById('hint-text');
+            hint.innerText = quizList[currentIdx].h || "ヒントなし"; hint.style.opacity = 0;
+            currentIdx < quizList.length ? startTimer() : endGame();
         }
         function startTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            let start = Date.now();
-            timerInterval = setInterval(() => {
-                let ratio = 1 - ((Date.now() - start) / 10000); // 10秒
+            if(timerInterval) clearInterval(timerInterval);
+            let s = Date.now();
+            timerInterval = setInterval(()=>{
+                let elapsed = Date.now() - s;
+                let ratio = 1 - (elapsed / 10000);
                 document.getElementById('timer-fill').style.width = Math.max(0, ratio * 100) + "%";
-                if (ratio < 0.5) document.getElementById('hint-text').style.opacity = 1;
-                if (ratio <= 0) { clearInterval(timerInterval); processResult(false); }
-            }, 50);
+                if(ratio < 0.5) document.getElementById('hint-text').style.opacity = 1;
+                if(elapsed > 10000) { clearInterval(timerInterval); processResult(false); }
+            }, 100);
         }
-        function tapNum(n) { playSound('key'); if (userInput.length < 4) { userInput += n; renderInput(); } }
-        function tapClear() { playSound('key'); userInput = ""; renderInput(); }
-        function renderInput() { document.getElementById('input-display').innerText = userInput || "____"; }
-        function tapOk() { if (userInput === "") return; clearInterval(timerInterval); processResult(userInput === quizList[currentIdx].y); }
-
-        function processResult(correct) {
-            const slash = document.getElementById('slash'), display = document.getElementById('input-display');
-            saveStat(quizList[currentIdx].id, correct, 'battle');
-            if (correct) {
-                playSound('slash'); 
-                slash.classList.remove('slash-anim'); void slash.offsetWidth; slash.classList.add('slash-anim');
-                enemyHp -= 20; display.style.color = "#4caf50";
-            } else {
-                playSound('damage'); 
-                document.getElementById('main-wrapper').classList.add('damage-flash');
-                setTimeout(() => document.getElementById('main-wrapper').classList.remove('damage-flash'), 300);
-                playerHp -= 25; display.style.color = "#f44336"; display.innerText = quizList[currentIdx].y;
+        function tapNum(n) { if(userInput.length<4) { userInput+=n; document.getElementById('input-display').innerText=userInput; playSound('key'); } }
+        function tapClear() { userInput=""; document.getElementById('input-display').innerText="____"; }
+        function tapOk() { if(userInput) { clearInterval(timerInterval); processResult(userInput===quizList[currentIdx].y); } }
+        function processResult(win) {
+            saveStat(quizList[currentIdx].id, win, 'battle');
+            if(win) { 
+                playSound('slash'); enemyHp-=25; 
+                document.getElementById('slash').classList.remove('slash-anim'); void document.getElementById('slash').offsetWidth; document.getElementById('slash').classList.add('slash-anim'); 
+                document.getElementById('input-display').style.color="#4caf50"; 
+            } else { 
+                playSound('damage'); playerHp-=30; 
+                document.getElementById('input-display').style.color="#f44336"; document.getElementById('input-display').innerText=quizList[currentIdx].y; 
             }
-            updateHpUI(); setTimeout(() => { currentIdx++; showQuestion(); }, 1200);
+            updateHp(); setTimeout(()=>{ currentIdx++; showQ(); }, 1500);
         }
-        
+
         function endGame() {
-            clearInterval(timerInterval); 
-            document.getElementById('game-ui').classList.add('hidden'); 
+            document.getElementById('game-ui').classList.add('hidden');
+            const win = enemyHp<=0;
             document.getElementById('result-screen').classList.remove('hidden');
-            const win = enemyHp <= 0;
-            document.getElementById('res-title').innerText = win ? "完全勝利" : "敗北";
+            document.getElementById('res-title').innerText = win ? "勝利" : "敗北";
             document.getElementById('res-msg').innerText = win ? "歴史の闇を切り裂いた！" : "修行して出直せ。";
-            
-            if (win && typeof getRandomDrop === 'function') {
-                const drop = getRandomDrop(); 
-                if (drop) {
+
+            if(win) {
+                let cData = (typeof cardData !== 'undefined') ? cardData : [];
+                if(cData.length > 0) {
+                    const drop = cData[Math.floor(Math.random() * cData.length)];
                     const isNew = !userCards.includes(drop.id);
-                    if(isNew) { 
-                        userCards.push(drop.id); 
-                        localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards)); 
-                    }
-                    setTimeout(() => openCardModal(drop, isNew), 1500);
+                    if(isNew) { userCards.push(drop.id); localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards)); }
+                    setTimeout(() => openCardModal(drop, isNew), 500); 
                 }
             }
         }
 
-        // --- フラッシュカード ---
-        function startFlash() {
-            document.getElementById('flash-ui').classList.remove('hidden');
-            quizList = masterData.filter(q => selectedEra === 'all' || q.era === selectedEra).slice(0, 10);
-            currentIdx = 0; showFcCard();
-        }
-        function showFcCard() {
-            if (currentIdx >= quizList.length) { alert("終了！"); location.reload(); return; }
-            fcStep = 0; const q = quizList[currentIdx];
-            document.getElementById('fc-progress').innerText = `${currentIdx + 1} / ${quizList.length}`;
-            document.getElementById('fc-year').innerText = q.y;
-            document.getElementById('fc-goro').innerText = q.h;
-            document.getElementById('fc-event').innerText = q.e;
-            document.getElementById('fc-goro').classList.add('hidden');
-            document.getElementById('fc-event').classList.add('hidden');
-            document.getElementById('fc-actions').classList.add('hidden');
-        }
-        function nextFcStep() {
-            fcStep++;
-            if (fcStep === 1) document.getElementById('fc-goro').classList.remove('hidden');
-            if (fcStep === 2) { 
-                document.getElementById('fc-event').classList.remove('hidden');
-                document.getElementById('fc-actions').classList.remove('hidden');
-            }
-        }
-        function rateCard(r) { playSound('ok'); currentIdx++; showFcCard(); }
-
-        // --- コレクション & モーダル (復活版) ---
         function showCollection() {
             document.getElementById('collection-ui').classList.remove('hidden');
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
-            
-            if (typeof cardData !== 'undefined') {
-                cardData.forEach(c => {
-                    const owned = userCards.includes(c.id);
-                    const div = document.createElement('div');
-                    div.className = `col-card ${owned ? 'r'+c.rarity : ''}`;
-                    if(owned && userCards[userCards.length-1] === c.id) div.classList.add('new');
-
-                    let stars = "★".repeat(c.rarity);
-                    
-                    div.innerHTML = `
-                        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:0 4px;">
-                            <div style="font-size:0.6rem; color:inherit; opacity:0.8;">No.${c.id.substring(1)}</div>
-                            <div style="font-size:0.7rem; color:${owned ? '#d32f2f' : '#888'};">${stars}</div>
-                        </div>
-                        <div style="width:90%; aspect-ratio:1/1; background:#fff; border-radius:4px; overflow:hidden; border:1px solid #777; margin:5px 0; display:flex; justify-content:center; align-items:center;">
-                            ${owned ? `<img src="${c.img}" style="width:100%; height:100%; object-fit:cover;">` : '<span style="font-size:2rem; color:#ccc;">?</span>'}
-                        </div>
-                        <div style="font-size:0.8rem; font-weight:bold; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; width:100%; text-align:center;">
-                            ${owned ? c.name : '???'}
-                        </div>
-                    `;
-                    div.onclick = () => { if(owned) openCardModal(c, false); };
-                    grid.appendChild(div);
-                });
-                document.getElementById('col-count').innerText = `${userCards.length} / ${cardData.length}`;
-            }
+            let cData = (typeof cardData !== 'undefined') ? cardData : [];
+            cData.forEach(c => {
+                const owned = userCards.includes(c.id);
+                const el = document.createElement('div');
+                el.className = `col-card ${owned ? 'r'+c.rarity : ''}`;
+                el.innerHTML = `
+                    <div class="col-card-num">No.${c.id.substring(1)}</div>
+                    <div style="width:100%; flex:1; display:flex; justify-content:center; align-items:center; background:#fff; margin:2px 0; border-radius:2px; overflow:hidden;">
+                        ${owned ? `<img src="${c.img}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="color:#000;font-size:1.5rem;">?</span>'}
+                    </div>
+                    <div class="col-card-name">${owned ? c.name : '???'}</div>
+                `;
+                el.onclick = () => { if(owned) openCardModal(c, false); };
+                grid.appendChild(el);
+            });
+            document.getElementById('col-count').innerText = `${userCards.length} / ${cData.length}`;
         }
 
         function openCardModal(card, isNew) {
             const modal = document.getElementById('card-modal');
             modal.classList.remove('hidden');
             document.getElementById('card-get-title').classList.toggle('hidden', !isNew);
-            const view = document.getElementById('card-view-node');
-            
-            // 豪華版HTML生成
-            const stars = "★".repeat(card.rarity);
-            const s = card.stats || { str:10, int:10, cha:10 };
+            if(isNew) playSound('ok');
 
+            const view = document.getElementById('card-view-node');
+            const s = card.stats || {str:10, int:10, cha:10};
+            
             view.innerHTML = `
-                <div class="flip-container" onclick="this.classList.toggle('flipped')">
+                <div class="flip-container" onclick="toggleFlip(this)">
                     <div class="flipper">
-                        <div class="front">
+                        <div class="front" data-rarity="${card.rarity}">
                             <div class="front-inner">
                                 <div class="card-bg"></div>
-                                <div class="card-top-bar"></div>
-                                <div class="group-icon">${card.group || '歴史'}</div>
-                                <div class="name-container">
-                                    <div class="card-subtitle">${card.title || '歴史人物'}</div>
-                                    <div class="card-main-name">${card.name}</div>
-                                </div>
-                                <div class="rarity-badge-star">
-                                    <svg viewBox="0 0 24 24" style="width:100%; height:100%; fill:#ffd700; stroke:#d4af37; stroke-width:1;"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/></svg>
-                                    <span class="rarity-text">${["?","N","R","SR","SSR"][card.rarity]||"N"}</span>
+                                <div class="card-header">
+                                    <div class="era-badge"><div class="era-icon">🏯</div><div class="era-text">${card.group||'歴史'}</div></div>
+                                    <div class="name-container"><div class="card-title">${card.title||'歴史人物'}</div><div class="card-name">${card.name}</div></div>
+                                    <div class="rarity-star"><svg class="star-svg" viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/></svg><span class="rarity-text">${["?","N","R","SR","SSR"][card.rarity]||"N"}</span></div>
                                 </div>
                                 <img src="${card.img}" class="card-char-img">
-                                <div class="card-bottom-info">
-                                    <div class="stats-row">
-                                        <div class="stat-pill">⚔️ ${s.str}</div>
-                                        <div class="stat-pill">🧠 ${s.int}</div>
-                                        <div class="stat-pill">💗 ${s.cha}</div>
-                                    </div>
+                                <div class="card-no">No.${card.id.substring(1)}</div>
+                                <div class="card-bottom">
+                                    <div class="stats-row"><span class="stat-pill str">⚔️つよさ ${s.str}</span><span class="stat-pill int">🧠かしこさ ${s.int}</span><span class="stat-pill cha">💗にんき ${s.cha}</span></div>
                                     <div class="desc-box">${card.desc}</div>
                                 </div>
                             </div>
                         </div>
                         <div class="back">
-                            <div class="bk-header">
-                                <div class="bk-name">${card.name}</div>
-                                <div style="font-size:0.8rem; color:#666;">${card.lifespan || ''}</div>
+                            <div class="back-header">
+                                <div class="bk-name">${card.name}</div><div class="bk-kana">${card.kana||''}</div><div class="bk-life">${card.lifespan || '生没年不詳'} [${card.group}]</div>
                             </div>
-                            <div class="bk-scroll">
-                                <div class="timeline-flow">
-                                    ${(card.timeline||[]).map(t => 
-                                        `<div class="tl-item"><span class="tl-year">${t.y}</span> ${t.e}</div>`
-                                    ).join('')}
-                                </div>
-                                <div class="mne-box">
-                                    <div style="font-size:0.7rem; font-weight:bold; color:#1565c0;">覚え方</div>
-                                    <div>${card.mnemonic || '特になし'}</div>
-                                </div>
+                            <div class="back-content">
+                                <div class="timeline-flow">${(card.timeline||[]).map(t => `<div class="tl-row"><span class="tl-year">${t.y}</span><span class="tl-event">${t.e}</span></div>`).join('')}</div>
+                                <div class="kw-box">${(card.keywords||[]).map(k => `<span class="kw-item">${k}</span>`).join('')}</div>
+                                <div class="memo-box"><div class="memo-icon">😭</div><div class="memo-text-area"><div class="memo-label">おぼえよう！</div><div class="memo-body">${card.mnemonic || '特になし'}</div></div></div>
+                                <div class="rel-diagram">${(card.relations||[]).map(r => `<div class="rel-box">${r.name}</div><div class="rel-arrow"><span>${r.dir==='to'?'➡':'⬅'}</span><span>${r.type}</span></div>`).join('')}<div class="rel-box main">${card.name}</div></div>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
         }
+        function toggleFlip(el) { el.classList.toggle('flipped'); }
         function closeCardModal() { document.getElementById('card-modal').classList.add('hidden'); }
-
-        // --- 戦績分析 ---
-        function showAnalysis() {
-            document.getElementById('analysis-ui').classList.remove('hidden');
-            const data = { v:2, s:userStats, c:userCards };
-            document.getElementById('export-area').value = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+        
+        // --- フラッシュカード ---
+        let fcStep=0;
+        function startFlash() {
+            document.getElementById('flash-ui').classList.remove('hidden');
+            let data = (typeof masterData !== 'undefined') ? masterData : [];
+            quizList = data.filter(q=>(selectedEra==='all'||q.era===selectedEra)).slice(0,10);
+            currentIdx=0; showFc();
         }
+        function showFc() {
+            if(currentIdx>=quizList.length) { alert('終了'); location.reload(); return; }
+            fcStep=0;
+            document.getElementById('fc-year').innerText = quizList[currentIdx].y;
+            document.getElementById('fc-goro').classList.add('hidden'); document.getElementById('fc-goro').innerText = quizList[currentIdx].h;
+            document.getElementById('fc-event').classList.add('hidden'); document.getElementById('fc-event').innerText = quizList[currentIdx].e;
+            document.getElementById('fc-actions').classList.add('hidden');
+        }
+        function nextFcStep() {
+            fcStep++;
+            if(fcStep===1) document.getElementById('fc-goro').classList.remove('hidden');
+            if(fcStep===2) { document.getElementById('fc-event').classList.remove('hidden'); document.getElementById('fc-actions').classList.remove('hidden'); }
+        }
+        function rateCard(r) { playSound('ok'); currentIdx++; showFc(); }
 
-        // --- 並び替えゲーム ---
+        // --- 整列ゲーム ---
+        const correctOrder = ["弥生", "古墳", "飛鳥", "奈良", "平安", "鎌倉", "室町", "安土桃山", "江戸", "明治", "大正", "昭和", "平成", "令和"];
+        let ghost = null; let placeholder = null; let dragSrcEl = null; let pressTimer = null; let isDragging = false;
+
         function startSortGame() {
             document.getElementById('sort-ui').classList.remove('hidden');
-            const c = document.getElementById('sort-container');
-            c.innerHTML = "";
-            const eras = ["平安", "鎌倉", "江戸", "明治", "令和"].sort(()=>Math.random()-0.5);
-            eras.forEach(e => {
-                const d = document.createElement('div');
-                d.className = 'slash-btn'; 
-                d.innerText = e;
-                d.style.marginBottom = "5px";
+            const c = document.getElementById('sort-container'); c.innerHTML = "";
+            const shuffled = [...correctOrder].sort(()=>Math.random()-0.5);
+            shuffled.forEach(era => {
+                const d = document.createElement('div'); d.className = 'sort-item'; d.innerText = era;
+                d.addEventListener('touchstart', handleTouchStart, {passive: false});
+                d.addEventListener('touchmove', handleTouchMove, {passive: false});
+                d.addEventListener('touchend', handleTouchEnd);
                 c.appendChild(d);
             });
         }
-        function checkSortOrder() { alert("（機能実装中：正しい順序か判定します）"); }
 
+        function handleTouchStart(e) {
+            const target = e.target;
+            pressTimer = setTimeout(() => {
+                isDragging = true; dragSrcEl = target; initiateDrag(e.touches[0]);
+            }, 300);
+        }
+
+        function initiateDrag(touch) {
+            if(!dragSrcEl) return;
+            if(navigator.vibrate) navigator.vibrate(20);
+            ghost = dragSrcEl.cloneNode(true); ghost.className = 'drag-ghost'; document.body.appendChild(ghost);
+            moveGhost(touch);
+            placeholder = document.createElement('div'); placeholder.className = 'sort-placeholder';
+            dragSrcEl.parentNode.insertBefore(placeholder, dragSrcEl.nextSibling);
+            dragSrcEl.style.display = 'none';
+        }
+        
+        function handleTouchMove(e) {
+            if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+            if(!isDragging) return;
+            e.preventDefault(); const touch = e.touches[0]; moveGhost(touch);
+            const container = document.getElementById('sort-container');
+            const rect = container.getBoundingClientRect();
+            if(touch.clientY < rect.top + 80) container.scrollTop -= 10;
+            else if(touch.clientY > rect.bottom - 80) container.scrollTop += 10;
+
+            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            if(element && element.classList.contains('sort-item') && element !== dragSrcEl) {
+                const bounding = element.getBoundingClientRect();
+                const offset = bounding.y + (bounding.height/2);
+                if(touch.clientY - offset > 0) container.insertBefore(placeholder, element.nextSibling);
+                else container.insertBefore(placeholder, element);
+            }
+        }
+        
+        function handleTouchEnd(e) {
+            if (pressTimer) clearTimeout(pressTimer);
+            if(isDragging) {
+                isDragging = false;
+                if(dragSrcEl) {
+                    dragSrcEl.style.display = 'block'; 
+                    if(placeholder && placeholder.parentNode) { placeholder.parentNode.insertBefore(dragSrcEl, placeholder); placeholder.remove(); }
+                    dragSrcEl = null; placeholder = null;
+                }
+                if(ghost) { ghost.remove(); ghost = null; }
+                playSound('damage');
+            }
+        }
+        function moveGhost(touch) { if(ghost) { ghost.style.left = (touch.clientX - 20) + 'px'; ghost.style.top = (touch.clientY - 20) + 'px'; } }
+        function checkSortOrder() {
+            const items = document.querySelectorAll('.sort-item'); let correctCount = 0;
+            items.forEach((item, index) => {
+                if(item.innerText === correctOrder[index]) { item.classList.add('correct'); item.classList.remove('wrong'); correctCount++; }
+                else { item.classList.add('wrong'); item.classList.remove('correct'); }
+            });
+            if(correctCount === correctOrder.length) { alert("見事！全問正解！"); playSound('ok'); } else { alert(`${correctCount}個 正解！`); }
+        }
+
+        function showAnalysis() {
+            document.getElementById('analysis-ui').classList.remove('hidden');
+            const container = document.getElementById('analysis-container'); container.innerHTML = "";
+            const eras = ['古代', '中世', '近世', '近代', '現代'];
+            let data = (typeof masterData !== 'undefined') ? masterData : [];
+            eras.forEach(era => {
+                const eraQs = data.filter(q => q.era === era);
+                if (eraQs.length === 0) return;
+                let score = 0;
+                eraQs.forEach(q => { const s = getStat(q.id); if(s.s > 0) score += 10; if(s.w > 0) score -= 5; });
+                let rate = Math.max(0, Math.min(100, (score / (eraQs.length * 10)) * 100));
+                let rank = 'D', color='#888'; if(rate>80) { rank='S'; color='var(--accent)'; } else if(rate>60) { rank='A'; color='#ff4081'; } else if(rate>40) { rank='B'; color='#4caf50'; }
+                container.innerHTML += `<div class="era-row"><div class="era-name">${era}</div><div class="era-graph"><div class="era-bar" style="width:${rate}%; background:${color};"></div></div><div class="era-rank" style="color:${color};">${rank}</div></div>`;
+            });
+            setTimeout(() => { document.querySelectorAll('.era-bar').forEach(el => { const w = el.style.width; el.style.width = '0%'; setTimeout(() => el.style.width = w, 50); }); }, 100);
+            const exportData = { v:2, s:userStats, c:userCards };
+            document.getElementById('export-area').value = btoa(unescape(encodeURIComponent(JSON.stringify(exportData))));
+        }
+        function copyData() { document.getElementById("export-area").select(); document.execCommand("copy"); alert("コピーしました！"); }
+        function importData() {
+            const code = document.getElementById('import-area').value; if(!code) return;
+            try {
+                const json = JSON.parse(decodeURIComponent(escape(atob(code))));
+                if(json.v === 2 && confirm("復元しますか？")) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(json.s)); localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(json.c));
+                    alert("完了"); location.reload();
+                }
+            } catch(e) { alert("エラー"); }
+        }
     </script>
 </body>
 </html>
