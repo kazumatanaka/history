@@ -55,7 +55,7 @@
             color: var(--text-main);
             user-select: none;
             
-            /* 背景設定 (画像がない場合はグラデーションが表示されます) */
+            /* 背景設定 */
             background-image: url('./assets/images/background_bg.jpg'), radial-gradient(circle at 50% 20%, #1a237e 0%, #000 70%);
             background-size: cover;
             background-position: center;
@@ -70,12 +70,11 @@
         /* --- メインラッパー --- */
         #main-wrapper {
             width: 100%;
-            max-width: 600px; /* 少し広げてリッチに */
+            max-width: 600px;
             height: 100%;
             position: relative;
             display: flex;
             flex-direction: column;
-            /* 背景を透過させてbodyの背景を見せる */
             background: rgba(0,0,0,0.3); 
             backdrop-filter: blur(5px);
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
@@ -85,7 +84,6 @@
         .overlay-screen {
             position: absolute;
             inset: 0;
-            /* ガラスの質感 */
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
@@ -105,7 +103,7 @@
             pointer-events: none;
         }
 
-        /* --- タイトル & メニュー (刷新) --- */
+        /* --- タイトル & メニュー --- */
         #mode-screen h1 {
             font-size: 3.5rem;
             font-weight: 800;
@@ -255,10 +253,10 @@
         }
 
         .hp-bar {
-            height: 12px; /* 少し細くしてスタイリッシュに */
+            height: 12px;
             background: #222;
             border: 1px solid #555;
-            transform: skewX(-20deg); /* 斜めカット */
+            transform: skewX(-20deg);
             overflow: hidden;
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
@@ -271,7 +269,6 @@
             box-shadow: 0 0 10px var(--hp-fill);
         }
         
-        /* 敵 HPの色を変える */
         #e-hp {
             background: linear-gradient(to right, #e53935, #b71c1c);
             box-shadow: 0 0 10px #b71c1c;
@@ -320,7 +317,7 @@
             100% { width: 120%; opacity: 0; }
         }
 
-        /* UI MID (問題表示) */
+        /* UI MID */
         .ui-mid {
             background: rgba(0, 0, 0, 0.8);
             border-top: 1px solid rgba(255,255,255,0.2);
@@ -357,7 +354,7 @@
             letter-spacing: 0.2em;
             margin: 5px 0;
             text-shadow: 0 0 15px var(--accent-glow);
-            font-family: 'Times New Roman', serif; /* 数字はセリフ体でかっこよく */
+            font-family: 'Times New Roman', serif;
         }
 
         /* テンキー */
@@ -407,7 +404,7 @@
             box-shadow: 0 0 15px #f44336;
         }
 
-        /* --- コレクション & カード (豪華版) --- */
+        /* --- コレクション & カード --- */
         #collection-ui {
             background: rgba(10,10,10,0.95);
         }
@@ -429,24 +426,7 @@
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
         }
 
-        /* --- カード詳細モーダル (ホログラム等) --- */
-        /* ※前回のCSS変数を引き継ぎつつ調整 */
-        :root {
-            --card-width: 300px;
-            --card-height: 460px;
-        }
-        
-        .front {
-            /* 前面をより豪華に */
-            border: 4px solid #000;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-        }
-
-        /* アニメーション用クラス */
-        .damage-flash { animation: flash-red 0.3s; }
-        @keyframes flash-red { 50% { background: rgba(255, 0, 0, 0.3); } }
-
-        /* --- 汎用ボタンスタイル (時代選択など) --- */
+        /* --- 汎用ボタンスタイル --- */
         .select-btn {
             background: rgba(255, 255, 255, 0.05);
             color: #fff;
@@ -673,7 +653,7 @@
 
     <script>
         /* =========================================
-           ここから JavaScript ロジック (統合版)
+           ここから JavaScript ロジック (修正・統合版)
            ========================================= */
         const STORAGE_KEY = 'history_game_v1';
         let userStats = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -716,7 +696,6 @@
                 case 'key': playTone('sine', 800, 0.05, 0.05); break;
                 case 'ok': playTone('sine', 1200, 0.1, 0.1); setTimeout(() => playTone('sine', 1800, 0.2, 0.1), 100); break;
                 case 'slash': 
-                    // 簡易的な斬撃音
                     playTone('sawtooth', 600, 0.1, 0.1); 
                     setTimeout(() => playTone('sawtooth', 100, 0.2, 0.1), 50);
                     break;
@@ -728,17 +707,13 @@
         let currentIdx = 0, quizList = [], userInput = "", timerInterval, fcStep = 0;
 
         window.onload = function () {
+            // masterData, cardData は外部ファイルから直接読み込まれるため、
+            // window.xxx として参照せず、直接変数として扱います。
             if (typeof masterData === 'undefined') { 
-                console.warn('questions.js が読み込まれていません。ダミーデータを使用します。');
-                window.masterData = [
-                    {id:0, y:"794", e:"平安京遷都", h:"鳴くよウグイス", era:"古代"},
-                    {id:1, y:"1192", e:"鎌倉幕府成立", h:"いい国作ろう", era:"中世"},
-                    {id:2, y:"1603", e:"江戸幕府成立", h:"ヒーローおっさん", era:"近世"}
-                ];
+                console.warn('questions.js が読み込まれていません。');
             } else {
                 masterData.forEach((d, i) => d.id = i);
             }
-            if (typeof cardData === 'undefined') { window.cardData = []; }
         };
 
         function selectMode(m) {
@@ -831,12 +806,22 @@
             document.getElementById('res-msg').innerText = win ? "歴史の闇を切り裂いた！" : "修行して出直せ。";
             
             if (win) {
-                // ドロップ判定 (簡易)
-                if(window.cardData && window.cardData.length > 0) {
-                    const drop = window.cardData[Math.floor(Math.random() * window.cardData.length)];
-                    const isNew = !userCards.includes(drop.id);
-                    if(isNew) { userCards.push(drop.id); localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards)); }
-                    setTimeout(() => openCardModal(drop, isNew), 1500);
+                // 【修正箇所】カードドロップ処理
+                // window.cardData ではなく 直接 getRandomDrop() を呼び出します
+                if (typeof getRandomDrop === 'function') {
+                    const drop = getRandomDrop(); // レアリティ抽選ロジックを使用
+                    
+                    if (drop) { // ドロップがあった場合
+                        const isNew = !userCards.includes(drop.id);
+                        if(isNew) { 
+                            userCards.push(drop.id); 
+                            localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards)); 
+                        }
+                        // 1.5秒後にモーダルを表示
+                        setTimeout(() => openCardModal(drop, isNew), 1500);
+                    }
+                } else {
+                    console.error("getRandomDrop 関数が見つかりません。cards.js を確認してください。");
                 }
             }
         }
@@ -844,7 +829,6 @@
         // --- フラッシュカード ---
         function startFlash() {
             document.getElementById('flash-ui').classList.remove('hidden');
-            // 簡易ロジック
             quizList = masterData.filter(q => selectedEra === 'all' || q.era === selectedEra).slice(0, 10);
             currentIdx = 0; showFcCard();
         }
@@ -876,17 +860,23 @@
             document.getElementById('collection-ui').classList.remove('hidden');
             const grid = document.getElementById('col-grid');
             grid.innerHTML = "";
-            (window.cardData || []).forEach(c => {
-                const owned = userCards.includes(c.id);
-                const div = document.createElement('div');
-                div.className = `col-card ${owned ? 'r'+c.rarity : ''}`;
-                div.style.aspectRatio = "2/3";
-                div.style.opacity = owned ? 1 : 0.5;
-                div.innerHTML = owned ? `<img src="${c.img}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#555;">?</div>';
-                div.onclick = () => { if(owned) openCardModal(c, false); };
-                grid.appendChild(div);
-            });
-            document.getElementById('col-count').innerText = `${userCards.length} / ${(window.cardData||[]).length}`;
+            
+            // 【修正箇所】ここも window.cardData ではなく cardData を参照
+            if (typeof cardData !== 'undefined') {
+                cardData.forEach(c => {
+                    const owned = userCards.includes(c.id);
+                    const div = document.createElement('div');
+                    div.className = `col-card ${owned ? 'r'+c.rarity : ''}`;
+                    div.style.aspectRatio = "2/3";
+                    div.style.opacity = owned ? 1 : 0.5;
+                    div.innerHTML = owned ? `<img src="${c.img}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="display:flex; justify-content:center; align-items:center; height:100%; color:#555;">?</div>';
+                    div.onclick = () => { if(owned) openCardModal(c, false); };
+                    grid.appendChild(div);
+                });
+                document.getElementById('col-count').innerText = `${userCards.length} / ${cardData.length}`;
+            } else {
+                document.getElementById('col-count').innerText = "データ読込エラー";
+            }
         }
 
         function openCardModal(card, isNew) {
@@ -895,7 +885,6 @@
             document.getElementById('card-get-title').classList.toggle('hidden', !isNew);
             const view = document.getElementById('card-view-node');
             
-            // 簡易カード表示 (CSSスタイルを活かすため)
             view.innerHTML = `
                 <div style="width:300px; height:460px; background:linear-gradient(135deg, #eee, #ddd); border-radius:10px; border:5px solid #d4af37; position:relative; overflow:hidden; color:#333;">
                     <div style="background:#333; color:#fff; padding:5px; text-align:center; font-weight:bold;">${card.name}</div>
@@ -915,11 +904,9 @@
             document.getElementById('analysis-ui').classList.remove('hidden');
             const data = { v:2, s:userStats, c:userCards };
             document.getElementById('export-area').value = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-            // グラフ描画は省略（コード長削減のため）
         }
 
         // --- 並び替えゲーム (簡易版) ---
-        // ※ドラッグ&ドロップの複雑なコードは容量のため簡略化していますが、CSSは入っています
         function startSortGame() {
             document.getElementById('sort-ui').classList.remove('hidden');
             const c = document.getElementById('sort-container');
@@ -927,7 +914,7 @@
             const eras = ["平安", "鎌倉", "江戸", "明治", "令和"].sort(()=>Math.random()-0.5);
             eras.forEach(e => {
                 const d = document.createElement('div');
-                d.className = 'slash-btn'; // スタイル流用
+                d.className = 'slash-btn'; 
                 d.innerText = e;
                 d.style.marginBottom = "5px";
                 c.appendChild(d);
