@@ -2,6 +2,404 @@
 // Rarity: 1=N, 2=R, 3=SR, 4=SSR, 5=UR
 
 const cardData = [
+    // --- アイテムカード (N) ---
+    {
+        "id": "i034",
+        "type": "item",
+        "name": "金印",
+        "title": "漢委奴国王",
+        "rarity": 1,
+        "desc": "福岡県の志賀島で見つかった純金製のハンコ。「漢の皇帝が委奴国の王に与えた」という意味が刻まれているよ。",
+        "img": "./assets/images/item_kinin.png",
+        "group": "弥生",
+        "kana": "きんいん",
+        "lifespan": "57年",
+        "timeline": [
+            { "y": "57", "e": "後漢の光武帝から賜る" },
+            { "y": "1784", "e": "志賀島で発見される" }
+        ],
+        "keywords": ["志賀島", "光武帝", "国宝"],
+        "mnemonic": "誤（5）解な（7）いよう金印授与",
+        "era": "弥生時代"
+    },
+    {
+        "id": "i035",
+        "type": "item",
+        "name": "銅鐸",
+        "title": "謎の青銅器",
+        "rarity": 1,
+        "desc": "弥生時代のお祭りに使われたカネ。表面に鹿や人の絵が描かれていることもあるよ。近畿地方で多く見つかる。",
+        "img": "./assets/images/item_dotaku.png",
+        "group": "弥生",
+        "kana": "どうたく",
+        "lifespan": "弥生時代",
+        "timeline": [],
+        "keywords": ["青銅器", "祭器", "近畿地方"],
+        "mnemonic": "",
+        "era": "弥生時代"
+    },
+    {
+        "id": "i036",
+        "type": "item",
+        "name": "前方後円墳",
+        "title": "巨大な王の墓",
+        "rarity": 1,
+        "desc": "日本独自の鍵穴のような形をした古墳。権力の大きさを示すために、巨大なものが作られたんだ。",
+        "img": "./assets/images/item_kofun.png",
+        "group": "古墳",
+        "kana": "ぜんぽうこうえんふん",
+        "lifespan": "3-7世紀",
+        "timeline": [
+            { "y": "5世紀", "e": "大仙古墳（仁徳天皇陵）築造" }
+        ],
+        "keywords": ["大仙古墳", "埴輪", "葺石"],
+        "mnemonic": "",
+        "era": "古墳時代"
+    },
+    {
+        "id": "i037",
+        "type": "item",
+        "name": "埴輪",
+        "title": "古墳の守り神",
+        "rarity": 1,
+        "desc": "古墳の周りに並べられた焼き物。人や馬、家など色々な形がある。死者の魂を守ったり鎮めたりする役割があったよ。",
+        "img": "./assets/images/item_haniwa.png",
+        "group": "古墳",
+        "kana": "はにわ",
+        "lifespan": "3-6世紀",
+        "timeline": [],
+        "keywords": ["古墳", "踊る人々", "武人"],
+        "mnemonic": "",
+        "era": "古墳時代"
+    },
+    {
+        "id": "i038",
+        "type": "item",
+        "name": "和同開珎",
+        "title": "日本最古の貨幣",
+        "rarity": 1,
+        "desc": "唐の「開元通宝」を真似て作られたお金。政府はこれを使わせるために、お金を蓄えた人に位を与えたりしたよ。",
+        "img": "./assets/images/item_wadokaichin.png",
+        "group": "奈良",
+        "kana": "わどうかいちん",
+        "lifespan": "708年",
+        "timeline": [
+            { "y": "708", "e": "武蔵国から銅が献上される" }
+        ],
+        "keywords": ["皇朝十二銭", "富本銭", "秩父"],
+        "mnemonic": "な（7）お（0）や（8）る気でる和同開珎",
+        "era": "奈良時代"
+    },
+    {
+        "id": "i039",
+        "type": "item",
+        "name": "火縄銃",
+        "title": "戦国を変えた武器",
+        "rarity": 1,
+        "desc": "種子島に伝わった鉄砲。織田信長はこれを大量に使って、長篠の戦いで武田騎馬隊を破ったんだ。",
+        "img": "./assets/images/item_hinawaju.png",
+        "group": "戦国",
+        "kana": "ひなわじゅう",
+        "lifespan": "1543年伝来",
+        "timeline": [
+            { "y": "1543", "e": "ポルトガル人が種子島に漂着" }
+        ],
+        "keywords": ["種子島", "南蛮貿易", "長篠の戦い"],
+        "mnemonic": "以後（15）予算（43）増える鉄砲伝来",
+        "era": "戦国時代"
+    },
+    {
+        "id": "i040",
+        "type": "item",
+        "name": "踏み絵",
+        "title": "キリシタン発見",
+        "rarity": 1,
+        "desc": "江戸時代、キリスト教を禁止するために行われた。イエスやマリアの絵を踏ませて、信者かどうかを確かめたんだ。",
+        "img": "./assets/images/item_fumie.png",
+        "group": "江戸",
+        "kana": "ふみえ",
+        "lifespan": "1629年開始",
+        "timeline": [
+            { "y": "1612", "e": "禁教令" },
+            { "y": "1637", "e": "島原・天草一揆" }
+        ],
+        "keywords": ["絵踏", "隠れキリシタン", "鎖国"],
+        "mnemonic": "",
+        "era": "江戸時代"
+    },
+    {
+        "id": "i041",
+        "type": "item",
+        "name": "解体新書",
+        "title": "西洋医学の夜明け",
+        "rarity": 1,
+        "desc": "杉田玄白らがオランダ語の医学書『ターヘル・アナトミア』を苦労して翻訳した本。日本の医学の発展に貢献した。",
+        "img": "./assets/images/item_kaitai.png",
+        "group": "江戸",
+        "kana": "かいたいしんしょ",
+        "lifespan": "1774年",
+        "timeline": [
+            { "y": "1774", "e": "解体新書出版" }
+        ],
+        "keywords": ["杉田玄白", "前野良沢", "蘭学"],
+        "mnemonic": "いいな（17）梨（74）解体新書",
+        "era": "江戸時代"
+    },
+    {
+        "id": "i042", "type": "item", "name": "富本銭", "title": "最古の貨幣？", "rarity": 1,
+        "desc": "和同開珎より古いかもしれないお金。飛鳥池遺跡からたくさん見つかったよ。",
+        "img": "./assets/images/item_fuhonsen.png", "group": "飛鳥", "era": "飛鳥時代"
+    },
+    {
+        "id": "i043", "type": "item", "name": "高松塚古墳壁画", "title": "鮮やかな美人画", "rarity": 1,
+        "desc": "奈良県の古墳の石室に描かれた極彩色の壁画。女子群像が有名だよ。",
+        "img": "./assets/images/item_takamatsuzuka.png", "group": "飛鳥", "era": "飛鳥時代"
+    },
+    {
+        "id": "i044", "type": "item", "name": "螺鈿紫檀五絃琵琶", "title": "正倉院の宝物", "rarity": 1,
+        "desc": "聖武天皇が愛用した世界に一つだけの琵琶。美しい装飾が施されているよ。",
+        "img": "./assets/images/item_biwa.png", "group": "奈良", "era": "奈良時代"
+    },
+    {
+        "id": "i045", "type": "item", "name": "古事記", "title": "神話の歴史書", "rarity": 1,
+        "desc": "太安万侶が稗田阿礼の言葉を書き留めた、日本最古の歴史書。",
+        "img": "./assets/images/item_kojiki.png", "group": "奈良", "era": "奈良時代"
+    },
+    {
+        "id": "i046", "type": "item", "name": "日本書紀", "title": "正史", "rarity": 1,
+        "desc": "舎人親王らがまとめた歴史書。外国に向けて日本の歴史を説明するために作られた。",
+        "img": "./assets/images/item_nihonshoki.png", "group": "奈良", "era": "奈良時代"
+    },
+    {
+        "id": "i047", "type": "item", "name": "風土記", "title": "地方の記録", "rarity": 1,
+        "desc": "全国の特産物や伝説をまとめた地誌。出雲国のものがほぼ完全に残っているよ。",
+        "img": "./assets/images/item_fudoki.png", "group": "奈良", "era": "奈良時代"
+    },
+    {
+        "id": "i048", "type": "item", "name": "万葉集", "title": "最古の歌集", "rarity": 1,
+        "desc": "天皇から農民まで、あらゆる身分の人が詠んだ約4500首の歌が収められているよ。",
+        "img": "./assets/images/item_manyoshu.png", "group": "奈良", "era": "奈良時代"
+    },
+    {
+        "id": "i049", "type": "item", "name": "寝殿造", "title": "貴族の住まい", "rarity": 1,
+        "desc": "平安時代の貴族の住宅様式。池のある庭園と、渡殿で結ばれた建物が特徴。",
+        "img": "./assets/images/item_shindenzukuri.png", "group": "平安", "era": "平安時代"
+    },
+    {
+        "id": "i050", "type": "item", "name": "かな文字", "title": "日本風の文字", "rarity": 1,
+        "desc": "漢字を崩して作られた文字。女性を中心に広まり、国風文化を発展させた。",
+        "img": "./assets/images/item_kana.png", "group": "平安", "era": "平安時代"
+    },
+    {
+        "id": "i051", "type": "item", "name": "源氏物語絵巻", "title": "雅な絵巻物", "rarity": 1,
+        "desc": "『源氏物語』の場面を描いた絵巻物。「引目鉤鼻」という独特の顔の描き方が特徴。",
+        "img": "./assets/images/item_genjiemaki.png", "group": "平安", "era": "平安時代"
+    },
+    {
+        "id": "i052", "type": "item", "name": "鳥獣戯画", "title": "最古の漫画？", "rarity": 1,
+        "desc": "ウサギやカエルが相撲をとったりする様子を墨一色で描いた、ユーモラスな絵巻物。",
+        "img": "./assets/images/item_choju.png", "group": "平安", "era": "平安時代"
+    },
+    {
+        "id": "i053", "type": "item", "name": "平家物語", "title": "無常の響き", "rarity": 1,
+        "desc": "平氏の繁栄と滅亡を描いた軍記物語。琵琶法師によって語り継がれた。",
+        "img": "./assets/images/item_heike.png", "group": "鎌倉", "era": "鎌倉時代"
+    },
+    {
+        "id": "i054", "type": "item", "name": "金剛力士像", "title": "東大寺の守護神", "rarity": 1,
+        "desc": "運慶・快慶らが作った、東大寺南大門にある迫力満点の仁王像。",
+        "img": "./assets/images/item_kongorikishi.png", "group": "鎌倉", "era": "鎌倉時代"
+    },
+    {
+        "id": "i055", "type": "item", "name": "蒙古襲来絵詞", "title": "御家人の奮戦", "rarity": 1,
+        "desc": "竹崎季長が、元寇での自分の活躍を描かせた絵巻物。てつはうも描かれている。",
+        "img": "./assets/images/item_moko.png", "group": "鎌倉", "era": "鎌倉時代"
+    },
+    {
+        "id": "i056", "type": "item", "name": "書院造", "title": "武士の住まい", "rarity": 1,
+        "desc": "床の間や違い棚、付書院などを備えた部屋。今の和室のもとになったよ。",
+        "img": "./assets/images/item_shoin.png", "group": "室町", "era": "室町時代"
+    },
+    {
+        "id": "i057", "type": "item", "name": "水墨画", "title": "墨の芸術", "rarity": 1,
+        "desc": "墨の濃淡だけで自然や風景を表現する絵画。雪舟が大成させた。",
+        "img": "./assets/images/item_suiboku.png", "group": "室町", "era": "室町時代"
+    },
+    {
+        "id": "i058", "type": "item", "name": "能面", "title": "幽玄の世界", "rarity": 1,
+        "desc": "能楽で使われるお面。角度によって表情が変わって見える不思議な魅力がある。",
+        "img": "./assets/images/item_noh.png", "group": "室町", "era": "室町時代"
+    },
+    {
+        "id": "i059", "type": "item", "name": "枯山水", "title": "石と砂の庭", "rarity": 1,
+        "desc": "水を使わずに、石や砂だけで山や水を表現した庭園。龍安寺の石庭が有名。",
+        "img": "./assets/images/item_karesansui.png", "group": "室町", "era": "室町時代"
+    },
+    {
+        "id": "i060", "type": "item", "name": "楽市楽座令", "title": "自由な市場", "rarity": 1,
+        "desc": "織田信長が出した、座（組合）を廃止して誰でも自由に商売できるようにした決まり。",
+        "img": "./assets/images/item_rakuichi.png", "group": "安土桃山", "era": "安土桃山"
+    },
+    {
+        "id": "i061", "type": "item", "name": "安土城", "title": "幻の名城", "rarity": 1,
+        "desc": "織田信長が琵琶湖のほとりに築いた豪華絢爛な城。本能寺の変の後に焼失した。",
+        "img": "./assets/images/item_azuchi.png", "group": "安土桃山", "era": "安土桃山"
+    },
+    {
+        "id": "i062", "type": "item", "name": "茶道具", "title": "わびさび", "rarity": 1,
+        "desc": "千利休が大成した茶の湯で使われる道具。質素な中に美しさを見出す心が込められている。",
+        "img": "./assets/images/item_chadogu.png", "group": "安土桃山", "era": "安土桃山"
+    },
+    {
+        "id": "i063", "type": "item", "name": "南蛮屏風", "title": "異国の風", "rarity": 1,
+        "desc": "南蛮人（ポルトガル人やスペイン人）が貿易のために来日した様子を描いた屏風。",
+        "img": "./assets/images/item_nanban.png", "group": "安土桃山", "era": "安土桃山"
+    },
+    {
+        "id": "i064", "type": "item", "name": "朱印船", "title": "貿易許可証", "rarity": 1,
+        "desc": "将軍から海外渡航の許可（朱印状）をもらって貿易を行った船。",
+        "img": "./assets/images/item_shuinsen.png", "group": "江戸", "era": "江戸初期"
+    },
+    {
+        "id": "i065", "type": "item", "name": "出島", "title": "唯一の窓口", "rarity": 1,
+        "desc": "鎖国中、オランダ人との貿易のために長崎に作られた扇形の人工島。",
+        "img": "./assets/images/item_dejima.png", "group": "江戸", "era": "江戸時代"
+    },
+    {
+        "id": "i066", "type": "item", "name": "菱川師宣", "title": "見返り美人", "rarity": 1,
+        "desc": "浮世絵の創始者とされる画家。「見返り美人図」が有名。",
+        "img": "./assets/images/item_moronobu.png", "group": "江戸", "era": "江戸時代"
+    },
+    {
+        "id": "i067", "type": "item", "name": "曾根崎心中", "title": "人形浄瑠璃", "rarity": 1,
+        "desc": "近松門左衛門が書いた人形浄瑠璃の脚本。実際に起きた心中事件をもとにしている。",
+        "img": "./assets/images/item_sonezaki.png", "group": "江戸", "era": "江戸時代"
+    },
+    {
+        "id": "i068", "type": "item", "name": "奥の細道", "title": "俳諧", "rarity": 1,
+        "desc": "松尾芭蕉が東北・北陸を旅して詠んだ俳句と紀行文。",
+        "img": "./assets/images/item_okuno.png", "group": "江戸", "era": "江戸時代"
+    },
+    {
+        "id": "i069", "type": "item", "name": "富嶽三十六景", "title": "富士山", "rarity": 1,
+        "desc": "葛飾北斎が描いた、いろいろな場所から見た富士山の浮世絵シリーズ。",
+        "img": "./assets/images/item_fugaku.png", "group": "江戸", "era": "江戸時代"
+    },
+    {
+        "id": "i070", "type": "item", "name": "東海道中膝栗毛", "title": "弥次喜多", "rarity": 1,
+        "desc": "十返舎一九が書いた滑稽本。弥次さんと喜多さんの珍道中を描いて大ヒットした。",
+        "img": "./assets/images/item_hizakurige.png", "group": "江戸", "era": "江戸時代"
+    },
+    {
+        "id": "i071", "type": "item", "name": "伊能図", "title": "正確な日本地図", "rarity": 1,
+        "desc": "伊能忠敬が全国を歩いて測量し、作った実測日本地図。西洋の地図にも負けない正確さだった。",
+        "img": "./assets/images/item_inozu.png", "group": "江戸", "era": "江戸時代"
+    },
+    {
+        "id": "i072", "type": "item", "name": "五箇条の御誓文", "title": "明治の方針", "rarity": 1,
+        "desc": "明治天皇が神々に誓う形で出された、新しい政治の基本方針。「広く会議を興し…」",
+        "img": "./assets/images/item_gokajo.png", "group": "明治", "era": "明治時代"
+    },
+    {
+        "id": "i073", "type": "item", "name": "富岡製糸場", "title": "官営模範工場", "rarity": 1,
+        "desc": "群馬県に作られた、生糸を作るための官営模範工場。世界遺産にもなったよ。",
+        "img": "./assets/images/item_tomioka.png", "group": "明治", "era": "明治時代"
+    },
+    {
+        "id": "i074", "type": "item", "name": "鹿鳴館", "title": "欧化政策", "rarity": 1,
+        "desc": "条約改正のために、外国の貴賓をもてなす舞踏会が開かれた洋館。",
+        "img": "./assets/images/item_rokumeikan.png", "group": "明治", "era": "明治時代"
+    },
+    {
+        "id": "i075", "type": "item", "name": "大日本帝国憲法", "title": "アジア初の憲法", "rarity": 1,
+        "desc": "天皇が国民に与える形（欽定憲法）で制定された憲法。天皇に強い権限があった。",
+        "img": "./assets/images/item_meijikenpo.png", "group": "明治", "era": "明治時代"
+    },
+    {
+        "id": "i076", "type": "item", "name": "八幡製鉄所", "title": "鉄は国家なり", "rarity": 1,
+        "desc": "日清戦争の賠償金を使って北九州に作られた官営の製鉄所。",
+        "img": "./assets/images/item_yawata.png", "group": "明治", "era": "明治時代"
+    },
+    {
+        "id": "i077", "type": "item", "name": "足尾銅山", "title": "公害の原点", "rarity": 1,
+        "desc": "栃木県の銅山。鉱毒による被害が発生し、田中正造が天皇に直訴しようとした。",
+        "img": "./assets/images/item_ashio.png", "group": "明治", "era": "明治時代"
+    },
+    {
+        "id": "i078", "type": "item", "name": "ラジオ放送", "title": "新しいメディア", "rarity": 1,
+        "desc": "1925年、東京・大阪・名古屋でラジオ放送が始まった。情報の伝達が速くなったよ。",
+        "img": "./assets/images/item_radio.png", "group": "大正", "era": "大正時代"
+    },
+    {
+        "id": "i079", "type": "item", "name": "選挙ポスター", "title": "普通選挙", "rarity": 1,
+        "desc": "1925年の普通選挙法で、25歳以上の全ての男性に選挙権が与えられた時のもの。",
+        "img": "./assets/images/item_senkyo.png", "group": "大正", "era": "大正時代"
+    },
+    {
+        "id": "i080", "type": "item", "name": "千人針", "title": "武運長久", "rarity": 1,
+        "desc": "出征する兵士の無事を祈って、多くの女性が糸を結んで作ったお守り。",
+        "img": "./assets/images/item_senninbari.png", "group": "昭和", "era": "昭和（戦前）"
+    },
+    {
+        "id": "i081", "type": "item", "name": "玉音放送", "title": "終戦", "rarity": 1,
+        "desc": "昭和天皇がラジオで国民に敗戦を伝えた放送。",
+        "img": "./assets/images/item_gyokuon.png", "group": "昭和", "era": "昭和（戦前）"
+    },
+    {
+        "id": "i082", "type": "item", "name": "闇市", "title": "戦後の混乱", "rarity": 1,
+        "desc": "戦後の食糧不足の中で、非合法に物が売買された市場。",
+        "img": "./assets/images/item_yamiichi.png", "group": "昭和", "era": "昭和（戦後）"
+    },
+    {
+        "id": "i083", "type": "item", "name": "日本国憲法", "title": "平和憲法", "rarity": 1,
+        "desc": "国民主権・基本的人権の尊重・平和主義を三つの柱とする今の憲法。",
+        "img": "./assets/images/item_nihonkokenpo.png", "group": "昭和", "era": "昭和（戦後）"
+    },
+    {
+        "id": "i084", "type": "item", "name": "東京タワー", "title": "復興のシンボル", "rarity": 1,
+        "desc": "1958年に完成した電波塔。高度経済成長期の日本のシンボルとなった。",
+        "img": "./assets/images/item_tokyotower.png", "group": "昭和", "era": "昭和（戦後）"
+    },
+    {
+        "id": "i085", "type": "item", "name": "新幹線", "title": "夢の超特急", "rarity": 1,
+        "desc": "1964年の東京オリンピックに合わせて開通した東海道新幹線。",
+        "img": "./assets/images/item_shinkansen.png", "group": "昭和", "era": "昭和（戦後）"
+    },
+    {
+        "id": "i086", "type": "item", "name": "三種の神器", "title": "憧れの家電", "rarity": 1,
+        "desc": "高度経済成長期にみんなが欲しがった、白黒テレビ・洗濯機・冷蔵庫のこと。",
+        "img": "./assets/images/item_sanshu.png", "group": "昭和", "era": "昭和（戦後）"
+    },
+    {
+        "id": "i087", "type": "item", "name": "万博シンボル", "title": "太陽の塔", "rarity": 1,
+        "desc": "1970年の大阪万博で作られた岡本太郎の作品。「人類の進歩と調和」がテーマ。",
+        "img": "./assets/images/item_banpaku.png", "group": "昭和", "era": "昭和（戦後）"
+    },
+    {
+        "id": "i088", "type": "item", "name": "ファミコン", "title": "ゲームブーム", "rarity": 1,
+        "desc": "1983年に発売された家庭用ゲーム機。子供たちの間で大爆発的な人気となった。",
+        "img": "./assets/images/item_famicon.png", "group": "昭和", "era": "昭和（戦後）"
+    },
+    {
+        "id": "i089", "type": "item", "name": "バブル", "title": "好景気", "rarity": 1,
+        "desc": "1980年代後半の、株や土地の値段が異常に上がった好景気のこと。",
+        "img": "./assets/images/item_bubble.png", "group": "平成", "era": "平成"
+    },
+    {
+        "id": "i090", "type": "item", "name": "消費税", "title": "新しい税金", "rarity": 1,
+        "desc": "1989年に3%で導入された税金。その後5%、8%、10%と上がっていった。",
+        "img": "./assets/images/item_tax.png", "group": "平成", "era": "平成"
+    },
+    {
+        "id": "i091", "type": "item", "name": "スカイツリー", "title": "世界一の塔", "rarity": 1,
+        "desc": "2012年に完成した電波塔。高さ634mで、自立式電波塔としては世界一。",
+        "img": "./assets/images/item_skytree.png", "group": "平成", "era": "平成"
+    },
+    {
+        "id": "i092", "type": "item", "name": "新紙幣", "title": "令和の顔", "rarity": 1,
+        "desc": "2024年から発行された新紙幣。渋沢栄一、津田梅子、北里柴三郎が描かれている。",
+        "img": "./assets/images/item_bill.png", "group": "令和", "era": "令和"
+    },
     {
         "id": "c001",
         "name": "卑弥呼",
@@ -1526,14 +1924,14 @@ function getCardById(id) {
 }
 
 function getRandomDrop() {
-    // 確率設定 (N:60%, R:30%, SR:8%, UR:2%)
+    // 確率設定 (N:70%, R:23%, SR:5%, UR:2%)
     const rand = Math.random() * 100;
     let targetRarity = 1;
 
     if (rand > 98) targetRarity = 4; // 2% SSR/UR
-    else if (rand > 90) targetRarity = 3; // 8% SR
-    else if (rand > 60) targetRarity = 2; // 30% R
-    else targetRarity = 1; // 60% N
+    else if (rand > 93) targetRarity = 3; // 5% SR
+    else if (rand > 70) targetRarity = 2; // 23% R
+    else targetRarity = 1; // 70% N
 
     let pool = cardData.filter(c => c.rarity === targetRarity);
     if (pool.length === 0) {
