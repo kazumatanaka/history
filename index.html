@@ -15,18 +15,26 @@
 
     <style>
         :root {
-            /* カラーパレット */
-            --primary: #b71c1c;
-            --primary-glow: #ff5252;
-            --accent: #ffd700;
-            --bg-dark: #050505;
-            --text-main: #f0f0f0;
-            --font-main: 'Shippori Mincho', serif;
+            /* Pop & Cute Ninja Palette */
+            --primary: #FF4081;
+            /* Pink pop */
+            --primary-glow: #ff80ab;
+            --accent: #FFCA28;
+            /* Bright Yellow Gold */
+            --accent-glow: #ffe082;
+            --bg-dark: #fff3e0;
+            /* Cream/Orange */
+            --text-main: #3e2723;
+            /* Dark Brown for clear pop UI text */
+            --font-main: 'M PLUS Rounded 1c', sans-serif;
             --font-game: 'M PLUS Rounded 1c', sans-serif;
-            --color-n: #a67c52;
-            --color-r: #c0c0c0;
-            --color-sr: #ffd700;
-            --color-ssr: #e0f7fa;
+
+            /* Card Rarity Colors */
+            --color-n: #8d6e63;
+            --color-r: #cfd8dc;
+            --color-sr: #ffd54f;
+            --color-ssr: #e1f5fe;
+
             --card-width: 300px;
             --card-height: 460px;
             --menu-width: 450px;
@@ -49,17 +57,33 @@
             overflow: hidden;
             color: var(--text-main);
             user-select: none;
-            background-image: url('./assets/images/background_bg.jpg'), radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-            background-size: cover;
-            background-position: center;
+            /* Pop Pattern Background */
+            background-image:
+                radial-gradient(#ffcc80 15%, transparent 16%),
+                radial-gradient(#ffcc80 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
         }
 
         h1,
         h2,
-        h3,
-        button {
+        h3 {
             font-family: var(--font-main);
             letter-spacing: 0.05em;
+            color: var(--primary);
+            text-shadow: 2px 2px 0px #fff;
+            font-weight: 900;
+        }
+
+        button {
+            font-family: var(--font-main);
+            letter-spacing: 0.1em;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            -webkit-text-stroke: 1.5px #fff;
+            filter: drop-shadow(0 4px 2px rgba(255, 64, 129, 0.3));
         }
 
         #main-wrapper {
@@ -69,15 +93,16 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid var(--primary);
+            border-right: 4px solid var(--primary);
         }
 
         .overlay-screen {
             position: absolute;
             inset: 0;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(255, 243, 224, 0.95);
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -85,7 +110,7 @@
             align-items: center;
             padding: 20px;
             text-align: center;
-            transition: opacity 0.3s;
+            transition: opacity 0.5s ease;
         }
 
         .hidden {
@@ -97,65 +122,109 @@
             max-width: var(--menu-width);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             overflow-y: auto;
-            padding: 10px;
+            padding: 20px 10px;
             max-height: 80vh;
         }
 
+        /* Cute Button Style */
         .slash-btn {
             position: relative;
-            background: linear-gradient(90deg, rgba(30, 30, 30, 0.9) 0%, rgba(60, 60, 60, 0.5) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid #555;
-            padding: 15px 20px;
+            background: #fff;
+            border: 4px solid var(--primary);
+            border-radius: 16px;
+            padding: 18px 24px;
             text-align: left;
-            color: #fff;
+            color: var(--text-main);
             font-family: var(--font-main);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            transition: transform 0.2s, background 0.3s;
+            box-shadow: 0 6px 0 var(--primary);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             width: 100%;
+            overflow: hidden;
+            margin-bottom: 8px;
         }
 
-        .slash-btn:active {
-            transform: scale(0.98);
+        .slash-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 64, 129, 0.1), transparent);
+            transition: left 0.5s;
         }
 
         .slash-btn:hover {
-            background: linear-gradient(90deg, rgba(183, 28, 28, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%);
-            border-left-color: var(--primary-glow);
+            background: #fffafa;
+            border-color: var(--primary-glow);
+            box-shadow: 0 4px 0 var(--primary-glow);
+            transform: translateY(2px);
+        }
+
+        .slash-btn:hover::before {
+            left: 100%;
+        }
+
+        .slash-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 var(--primary);
         }
 
         .btn-title {
-            font-size: 1.2rem;
-            font-weight: 700;
+            font-size: 1.4rem;
+            font-weight: 900;
         }
 
         .btn-sub {
-            font-size: 0.7rem;
-            color: #aaa;
+            font-size: 0.8rem;
+            color: #ff80ab;
             text-transform: uppercase;
-            margin-top: 2px;
+            margin-top: 4px;
+            font-weight: bold;
+            letter-spacing: 0.05em;
         }
 
         .btn-icon {
-            font-size: 1.5rem;
-            opacity: 0.7;
+            font-size: 1.8rem;
+            opacity: 1;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .slash-btn:hover .btn-icon {
+            transform: scale(1.2) rotate(15deg);
         }
 
         .quit-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #eee;
-            padding: 8px 16px;
+            background: #FFCA28;
+            border: 2px solid #FF8F00;
+            border-radius: 20px;
+            color: #fff;
+            padding: 10px 24px;
             cursor: pointer;
             font-family: var(--font-main);
-            margin-top: 15px;
-            z-index: 10;
+            margin-top: 30px;
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            box-shadow: 0 4px 0 #FF8F00;
+            transition: all 0.2s;
+        }
+
+        .quit-btn:hover {
+            background: #FFD54F;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #FF8F00;
+        }
+
+        .quit-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #FF8F00;
         }
 
         /* ゲーム画面 */
@@ -165,22 +234,25 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 4px dashed var(--primary-glow);
+            color: var(--primary);
+            font-weight: 900;
         }
 
         .hp-bar {
             width: 100%;
-            height: 10px;
-            background: #333;
-            border: 1px solid #555;
-            transform: skewX(-20deg);
+            height: 16px;
+            background: #ffe0b2;
+            border: 2px solid #ff9800;
+            border-radius: 8px;
             overflow: hidden;
             margin-top: 5px;
         }
 
         .hp-fill {
             height: 100%;
-            transition: width 0.3s;
+            transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         #p-hp {
@@ -205,21 +277,21 @@
         #enemy-samurai {
             width: 280px;
             height: 280px;
-            background: url('./assets/images/enemy_samurai_nanobanana.png') no-repeat bottom center;
+            background: url('./assets/images/enemy_samurai_pop.png') no-repeat bottom center;
             background-size: contain;
-            animation: sway 4s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.3));
+            animation: sway 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 64, 129, 0.4));
         }
 
         @keyframes sway {
 
             0%,
             100% {
-                transform: translateY(0);
+                transform: translateY(0) rotate(0deg);
             }
 
             50% {
-                transform: translateY(-10px);
+                transform: translateY(-10px) rotate(2deg);
             }
         }
 
@@ -228,9 +300,10 @@
             top: 50%;
             left: 10%;
             width: 0%;
-            height: 5px;
+            height: 10px;
             background: #fff;
-            box-shadow: 0 0 15px 5px #fff;
+            border-radius: 50px;
+            box-shadow: 0 0 15px 5px var(--accent);
             transform: rotate(-25deg);
             pointer-events: none;
         }
@@ -243,31 +316,39 @@
             0% {
                 width: 0%;
                 opacity: 1;
+                transform: rotate(-25deg) scale(0.5);
             }
 
             50% {
                 width: 120%;
                 opacity: 1;
+                transform: rotate(-25deg) scale(1.5);
             }
 
             100% {
                 width: 120%;
                 opacity: 0;
+                transform: rotate(-25deg) scale(1.2);
             }
         }
 
         .ui-mid {
-            background: rgba(0, 0, 0, 0.85);
+            background: #fff;
             padding: 15px;
             text-align: center;
-            border-top: 1px solid #333;
+            border-top: 4px solid var(--primary);
             position: relative;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            margin-top: -10px;
+            /* Pull UI up */
         }
 
         #timer-gauge {
             width: 100%;
-            height: 4px;
-            background: #333;
+            height: 8px;
+            background: #ffe0b2;
+            border-radius: 4px;
             margin-bottom: 10px;
             position: relative;
             overflow: hidden;
@@ -276,67 +357,84 @@
         #timer-fill {
             width: 100%;
             height: 100%;
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
             transition: width 0.1s linear;
         }
 
         #event-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-main);
             margin-bottom: 5px;
             min-height: 2rem;
         }
 
         #hint-text {
-            font-size: 0.9rem;
-            color: #ffd700;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #FF8F00;
             min-height: 1.2rem;
             opacity: 0;
             transition: opacity 0.5s;
         }
 
         #input-display {
-            font-size: 3rem;
-            font-family: 'Times New Roman', serif;
+            font-size: 3.5rem;
+            font-family: var(--font-main);
+            font-weight: 900;
             letter-spacing: 0.2em;
-            text-shadow: 0 0 10px var(--accent);
+            color: var(--primary);
+            text-shadow: 2px 2px 0 var(--accent);
             margin-top: 5px;
         }
 
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            padding: 10px;
-            background: #111;
+            gap: 10px;
+            padding: 15px;
+            background: #fff3e0;
         }
 
         .key {
-            background: #222;
-            color: #fff;
-            border: 1px solid #444;
+            background: #fff;
+            color: var(--primary);
+            border: 3px solid #ffcc80;
+            border-radius: 12px;
             padding: 15px;
-            font-size: 1.5rem;
-            font-family: 'Times New Roman', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            font-family: var(--font-main);
             cursor: pointer;
+            box-shadow: 0 4px 0 #ffcc80;
+            transition: all 0.1s;
         }
 
         .key:active {
-            background: #444;
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #ffcc80;
+            background: #fff9c4;
         }
 
         .key.ok {
-            background: #b71c1c;
-            border-color: #ff5252;
+            background: var(--primary);
+            color: #fff;
+            border-color: #d81b60;
+            box-shadow: 0 4px 0 #d81b60;
+        }
+
+        .key.ok:active {
+            box-shadow: 0 0 0 #d81b60;
+            background: #c2185b;
+            transform: translateY(4px);
         }
 
         /* コレクション */
         #collection-ui {
             display: flex;
             flex-direction: column;
-            background: #111;
+            background: #fff3e0;
             padding: 0;
             align-items: center;
         }
@@ -345,7 +443,10 @@
             width: 100%;
             max-width: var(--menu-width);
             padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            background: #fff;
+            border-bottom: 4px solid var(--primary);
+            color: var(--primary);
+            font-weight: 900;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -365,9 +466,9 @@
 
         .col-card {
             aspect-ratio: 2/3;
-            background: #222;
-            border: 2px solid #555;
-            border-radius: 6px;
+            background: #fff;
+            border: 3px solid #555;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -375,58 +476,75 @@
             padding: 4px;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            transition: transform 0.1s;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s, box-shadow 0.1s;
         }
 
         .col-card:active {
-            transform: scale(0.95);
+            transform: translateY(4px);
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
         }
 
         .col-card.r1 {
             border-color: var(--color-n);
-            background: linear-gradient(135deg, #3e2723, #1a1a1a);
+            background: #000;
+            color: #fff;
         }
 
         .col-card.r2 {
-            border-color: var(--color-r);
-            background: linear-gradient(135deg, #455a64, #1a1a1a);
+            border: none;
+            padding: 7px;
+            background: linear-gradient(135deg, #7f7f7f 0%, #dcdcdc 20%, #ffffff 50%, #dcdcdc 80%, #7f7f7f 100%);
+            box-shadow: 0 4px 0 #9e9e9e;
+            color: #000;
         }
 
         .col-card.r3 {
-            border-color: var(--color-sr);
-            background: linear-gradient(135deg, #5d4037, #1a1a1a);
+            border: none;
+            padding: 7px;
+            background: linear-gradient(135deg, #b8860b 0%, #ffd700 20%, #ffeb3b 50%, #ffd700 80%, #b8860b 100%);
+            box-shadow: 0 4px 0 #f57f17;
+            color: #000;
         }
 
         .col-card.r4 {
-            border-color: #fff;
-            background: linear-gradient(135deg, #4a148c, #000);
-            animation: glow-pulse 2s infinite;
+            border: 3px solid transparent;
+            background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #a18cd1 40%, #fbc2eb 60%, #8fd3f4 80%, #ff9a9e 100%);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            box-shadow: 0 4px 0 #ce93d8;
+            color: #000;
         }
 
         .col-card-num {
             font-size: 0.6rem;
-            opacity: 0.7;
+            opacity: 0.8;
             width: 100%;
             text-align: left;
             padding-left: 2px;
+            font-weight: bold;
         }
 
         .col-card-name {
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 900;
             width: 100%;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .col-card.r1 .col-card-name {
+            text-shadow: none;
         }
 
         /* カード詳細モーダル (カードと背景を分離) */
         #card-modal {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(255, 243, 224, 0.95);
             z-index: 200;
             display: flex;
             flex-direction: column;
@@ -504,13 +622,33 @@
         }
 
         .front[data-rarity="2"] {
-            border-color: var(--color-r);
-            box-shadow: 0 0 15px rgba(192, 192, 192, 0.3);
+            /* Silver / 銀 */
+            border: none;
+            padding: 6px;
+            background: linear-gradient(135deg, #7f7f7f 0%, #dcdcdc 20%, #ffffff 50%, #dcdcdc 80%, #7f7f7f 100%);
+            background-size: 200% 200%;
+            animation: metal-shine 3s linear infinite;
+            box-shadow: 0 0 15px rgba(192, 192, 192, 0.5);
         }
 
         .front[data-rarity="3"] {
-            border-color: var(--color-sr);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            /* Gold / 金 */
+            border: none;
+            padding: 6px;
+            background: linear-gradient(135deg, #b8860b 0%, #ffd700 20%, #ffeb3b 50%, #ffd700 80%, #b8860b 100%);
+            background-size: 200% 200%;
+            animation: metal-shine 3s linear infinite;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        @keyframes metal-shine {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
         }
 
         .front[data-rarity="4"] {
@@ -546,6 +684,11 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+        }
+
+        .front[data-rarity="2"] .front-inner,
+        .front[data-rarity="3"] .front-inner {
+            border-width: 10px;
         }
 
         .card-bg {
@@ -642,7 +785,7 @@
             fill: #ffd700;
             stroke: #d4af37;
             stroke-width: 2px;
-            drop-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
         }
 
         .rarity-text {
@@ -965,10 +1108,26 @@
             width: 100%;
             max-width: var(--menu-width);
             padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
+            background: #fff;
+            border-bottom: 4px solid var(--primary);
+            color: var(--primary);
+            font-weight: 900;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        #sort-header .quit-btn {
+            background: var(--primary);
+            color: #fff;
+            border-color: #d81b60;
+            box-shadow: 0 4px 0 #d81b60;
+        }
+
+        #sort-header .quit-btn:active {
+            box-shadow: 0 0 0 #d81b60;
+            background: #c2185b;
+            transform: translateY(4px);
         }
 
         #sort-container {
@@ -983,16 +1142,18 @@
 
         .sort-item {
             width: 100%;
-            background: linear-gradient(90deg, #222, #333);
+            background: #fff;
             padding: 20px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border-left: 5px solid #555;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            border: 3px solid #ffcc80;
+            border-left: 8px solid var(--accent);
             cursor: grab;
             text-align: left;
             font-size: 1.2rem;
-            color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            color: var(--text-main);
+            font-weight: bold;
+            box-shadow: 0 4px 0 #ffcc80;
             touch-action: pan-y;
             user-select: none;
             transition: transform 0.2s, opacity 0.2s;
@@ -1006,15 +1167,16 @@
         .sort-placeholder {
             width: 100%;
             height: 60px;
-            background: rgba(255, 215, 0, 0.1);
-            border: 2px dashed var(--accent);
-            border-radius: 4px;
-            margin-bottom: 10px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 3px dashed var(--accent);
+            border-radius: 16px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--accent);
-            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 1rem;
         }
 
         .sort-placeholder::after {
@@ -1026,24 +1188,25 @@
             pointer-events: none;
             z-index: 9999;
             width: 300px;
-            background: #333;
+            background: #fff;
             padding: 20px;
-            border-left: 5px solid var(--accent);
-            color: #fff;
-            border-radius: 4px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            border-left: 8px solid var(--primary);
+            color: var(--text-main);
+            border-radius: 16px;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3);
             opacity: 0.9;
-            transform: scale(1.05);
+            transform: scale(1.05) rotate(2deg);
         }
 
         .sort-item.correct {
             border-left-color: #4caf50;
-            background: #1b5e20;
+            background: #e8f5e9;
         }
 
         .sort-item.wrong {
             border-left-color: #f44336;
-            background: #b71c1c;
+            background: #ffebee;
         }
 
         #analysis-ui {
@@ -1051,7 +1214,7 @@
             height: 100%;
             overflow-y: auto;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(255, 243, 224, 0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1066,10 +1229,12 @@
             display: flex;
             align-items: center;
             margin-bottom: 10px;
-            background: #222;
-            padding: 10px;
-            border-radius: 5px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 0 #ffcc80;
             width: 100%;
+            color: var(--text-main);
         }
 
         .era-name {
@@ -1079,54 +1244,69 @@
 
         .era-graph {
             flex: 1;
-            height: 10px;
-            background: #444;
+            height: 12px;
+            background: #ffe0b2;
             margin: 0 10px;
-            border-radius: 5px;
+            border-radius: 10px;
             overflow: hidden;
         }
 
         .era-bar {
             height: 100%;
-            background: var(--accent);
+            background: var(--primary);
             width: 0%;
-            transition: width 1s;
+            transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .era-rank {
             width: 30px;
             font-weight: bold;
             text-align: right;
+            color: var(--primary);
         }
 
         .data-box {
-            background: #222;
+            background: #fff;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 16px;
             margin-top: 20px;
-            border: 1px solid #444;
+            border: 3px solid var(--accent);
+            box-shadow: 0 4px 0 var(--accent);
+            color: var(--text-main);
         }
 
         #export-area,
         #import-area {
             width: 100%;
             height: 60px;
-            background: #111;
-            color: #fff;
-            border: 1px solid #555;
-            padding: 5px;
+            background: #fff9c4;
+            color: var(--text-main);
+            border: 2px solid #ff9800;
+            border-radius: 8px;
+            padding: 10px;
             font-family: monospace;
+            font-weight: bold;
+            margin-top: 5px;
         }
 
         .select-btn {
-            background: rgba(255, 255, 255, 0.1);
+            background: #fff;
             width: 100%;
             padding: 15px;
             margin-bottom: 10px;
-            color: #fff;
-            border: 1px solid #555;
+            color: var(--text-main);
+            border: 3px solid #ff9800;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 1rem;
+            font-weight: 900;
+            box-shadow: 0 4px 0 #ff9800;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .select-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #ff9800;
         }
     </style>
 </head>
@@ -1134,8 +1314,12 @@
 <body>
 
     <div id="main-wrapper">
+        <button id="bgm-toggle-btn" class="quit-btn"
+            style="position: absolute; top: 10px; right: 10px; z-index: 500; margin: 0; padding: 5px 10px; font-size: 0.8rem;"
+            onclick="toggleBgm()">🎵 BGM: ON</button>
         <div id="mode-screen" class="overlay-screen">
-            <h1>歴史無双</h1>
+            <img src="./assets/images/logo_pop_kabuto.png" alt="歴史無双"
+                style="width: 80%; max-width: 400px; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(255, 64, 129, 0.4));" />
             <div class="menu-list">
                 <button class="slash-btn" onclick="selectMode('battle')">
                     <div>
@@ -1165,7 +1349,7 @@
                     </div>
                     <div class="btn-icon">💎</div>
                 </button>
-                <button class="slash-btn" style="border-left-color: #888;" onclick="selectMode('analysis')">
+                <button class="slash-btn" onclick="selectMode('analysis')">
                     <div>
                         <div class="btn-title">戦績・記録</div>
                         <div class="btn-sub">Data & Records</div>
@@ -1215,149 +1399,187 @@
                     </div>
                 </button>
             </div>
-            <button class="quit-btn" onclick="location.reload()">戻る</button>
         </div>
+        <button class="quit-btn" onclick="location.reload()">戻る</button>
+    </div>
 
-        <div id="diff-screen" class="overlay-screen hidden">
-            <h2 style="margin-bottom:20px;">戦法を選択</h2>
-            <div class="menu-list">
-                <button class="slash-btn" onclick="startBattle('normal')">
-                    <div>
-                        <div class="btn-title">通常実戦</div>
-                        <div class="btn-sub">Standard</div>
-                    </div>
-                    <div class="btn-icon">⚔️</div>
-                </button>
-                <button class="slash-btn"
-                    style="border-left-color:#e53935; background:linear-gradient(90deg, rgba(100,0,0,0.6), rgba(0,0,0,0.8));"
-                    onclick="startBattle('weak')">
-                    <div>
-                        <div class="btn-title">苦手克服</div>
-                        <div class="btn-sub">Weakness Training</div>
-                    </div>
-                    <div class="btn-icon">🔥</div>
-                    <div id="weak-badge"
-                        style="background:red; padding:2px 8px; border-radius:10px; font-size:0.8rem; font-weight:bold; margin-left:10px;">
-                        0</div>
-                </button>
-            </div>
-            <button class="quit-btn" onclick="location.reload()">戻る</button>
-        </div>
-
-        <div id="game-ui" class="hidden" style="height:100%; display:flex; flex-direction:column;">
-            <div class="status-bar">
-                <div style="width:40%">YOU<div class="hp-bar">
-                        <div id="p-hp" class="hp-fill"></div>
-                    </div>
+    <div id="star-screen" class="overlay-screen hidden">
+        <h2 style="margin-bottom:20px;">重要度を選べ</h2>
+        <div class="menu-list">
+            <button class="slash-btn" style="border-left-color:var(--accent);" onclick="selectStar(0)">
+                <div>
+                    <div class="btn-title">すべて</div>
+                    <div class="btn-sub">All Stars</div>
                 </div>
-                <button class="quit-btn" style="margin:0; padding:5px 10px;" onclick="location.reload()">逃げる</button>
-                <div style="width:40%; text-align:right;">ENEMY<div class="hp-bar">
-                        <div id="e-hp" class="hp-fill"></div>
-                    </div>
+            </button>
+            <button class="slash-btn" onclick="selectStar(1)">
+                <div>
+                    <div class="btn-title">★</div>
+                    <div class="btn-sub">基礎レベル</div>
+                </div>
+            </button>
+            <button class="slash-btn" onclick="selectStar(2)">
+                <div>
+                    <div class="btn-title">★★</div>
+                    <div class="btn-sub">標準レベル</div>
+                </div>
+            </button>
+            <button class="slash-btn" onclick="selectStar(3)">
+                <div>
+                    <div class="btn-title">★★★</div>
+                    <div class="btn-sub">重要レベル</div>
+                </div>
+            </button>
+        </div>
+        <button class="quit-btn" onclick="selectMode(mode)">戻る</button>
+    </div>
+
+    <div id="diff-screen" class="overlay-screen hidden">
+        <h2 style="margin-bottom:20px;">戦法を選択</h2>
+        <div class="menu-list">
+            <button class="slash-btn" onclick="startBattle('normal')">
+                <div>
+                    <div class="btn-title">通常実戦</div>
+                    <div class="btn-sub">Standard</div>
+                </div>
+                <div class="btn-icon">⚔️</div>
+            </button>
+            <button class="slash-btn"
+                style="border-left-color: var(--accent); background: linear-gradient(90deg, #ffca28, #ffb300); color: #3e2723;"
+                onclick="startBattle('weak')">
+                <div>
+                    <div class="btn-title">苦手克服</div>
+                    <div class="btn-sub">Weakness Training</div>
+                </div>
+                <div class="btn-icon">🔥</div>
+                <div id="weak-badge"
+                    style="background:red; padding:2px 8px; border-radius:10px; font-size:0.8rem; font-weight:bold; margin-left:10px;">
+                    0</div>
+            </button>
+        </div>
+        <button class="quit-btn" onclick="location.reload()">戻る</button>
+    </div>
+
+    <div id="game-ui" class="hidden" style="height:100%; display:flex; flex-direction:column;">
+        <div class="status-bar">
+            <div style="width:40%">YOU<div class="hp-bar">
+                    <div id="p-hp" class="hp-fill"></div>
                 </div>
             </div>
-            <div id="battle-stage">
-                <div id="slash"></div>
-                <div id="enemy-samurai"></div>
-            </div>
-            <div class="ui-mid">
-                <div id="timer-gauge">
-                    <div id="timer-fill"></div>
-                </div>
-                <div id="event-name">出陣</div>
-                <div id="hint-text">💡 ヒント</div>
-                <div id="input-display">____</div>
-            </div>
-            <div class="keypad">
-                <button class="key" onclick="tapNum(1)">1</button><button class="key"
-                    onclick="tapNum(2)">2</button><button class="key" onclick="tapNum(3)">3</button>
-                <button class="key" onclick="tapNum(4)">4</button><button class="key"
-                    onclick="tapNum(5)">5</button><button class="key" onclick="tapNum(6)">6</button>
-                <button class="key" onclick="tapNum(7)">7</button><button class="key"
-                    onclick="tapNum(8)">8</button><button class="key" onclick="tapNum(9)">9</button>
-                <button class="key" onclick="tapClear()">C</button><button class="key"
-                    onclick="tapNum(0)">0</button><button class="key ok" onclick="tapOk()">斬</button>
-            </div>
-        </div>
-
-        <div id="flash-ui" class="overlay-screen hidden">
-            <div id="fc-card" onclick="nextFcStep()"
-                style="width:90%; height:60%; background:#fff; color:#000; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
-                <h1 id="fc-year" style="font-size:4rem; margin:0;">----</h1>
-                <h2 id="fc-goro" class="hidden" style="color:#b71c1c;">ゴロ</h2>
-                <div id="fc-event" class="hidden" style="font-size:1.5rem; font-weight:bold;">出来事</div>
-                <div style="margin-top:auto; font-size:0.8rem; color:#888;">タップで進む</div>
-            </div>
-            <div id="fc-actions" class="hidden"
-                style="margin-top:20px; width:90%; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
-                <button class="select-btn" style="background:#4caf50;" onclick="rateCard('memo')">覚えた</button>
-                <button class="select-btn" style="background:#2196f3;" onclick="rateCard('normal')">普通</button>
-                <button class="select-btn" style="background:#f44336;" onclick="rateCard('weak')">苦手</button>
-            </div>
-            <button class="quit-btn" style="position:absolute; top:20px; right:20px;"
-                onclick="location.reload()">終了</button>
-        </div>
-
-        <div id="collection-ui" class="overlay-screen hidden" style="padding:0; justify-content:start;">
-            <div id="col-header">
-                <button class="quit-btn" style="margin:0;" onclick="location.reload()">戻る</button>
-                <span>宝物庫</span>
-                <span id="col-count">0/0</span>
-            </div>
-            <div id="col-grid"></div>
-        </div>
-
-        <div id="card-modal" class="hidden">
-            <h2 id="card-get-title" class="hidden"
-                style="color:#ffd700; text-shadow:0 0 10px #ff0000; font-size:2.5rem; margin-bottom:20px; z-index:210;">
-                お宝発見！</h2>
-            <div id="card-view-node"></div>
-            <button id="modal-close-btn" class="quit-btn" onclick="closeCardModal()">閉じる</button>
-            <p style="color:#fff; margin-top:10px; font-size:0.8rem; z-index:210;">カードをタップで裏返す</p>
-            <div id="modal-bg-trigger" onclick="closeCardModal()"></div>
-        </div>
-
-        <div id="sort-ui" class="overlay-screen hidden">
-            <div id="sort-header">
-                <button class="quit-btn" style="margin:0;" onclick="location.reload()">中断</button>
-                <span>時代を並べ替えよ</span>
-                <button class="quit-btn" style="margin:0; border-color:var(--accent); color:var(--accent);"
-                    onclick="checkSortOrder()">判定</button>
-            </div>
-            <div id="sort-container"></div>
-        </div>
-
-        <div id="analysis-ui" class="overlay-screen hidden">
-            <div
-                style="width:100%; display:flex; justify-content:space-between; margin-bottom:20px; max-width: var(--menu-width);">
-                <h2>戦績分析</h2>
-                <button class="quit-btn" style="margin:0;" onclick="location.reload()">閉じる</button>
-            </div>
-            <div id="analysis-container" class="analysis-content"></div>
-            <div class="analysis-content" style="margin-top:20px;">
-                <div class="data-box">
-                    <p style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">データ引継ぎ</p>
-                    <textarea id="export-area" readonly onclick="this.select()"></textarea>
-                    <button class="select-btn" style="margin-top:5px; padding:8px; font-size:0.9rem;"
-                        onclick="copyData()">コードをコピー</button>
-                </div>
-                <div class="data-box">
-                    <p style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">データ復元</p>
-                    <textarea id="import-area" placeholder="ここにコードを貼り付け"></textarea>
-                    <button class="select-btn"
-                        style="margin-top:5px; padding:8px; font-size:0.9rem; border-color:var(--accent); color:var(--accent);"
-                        onclick="importData()">データを復元</button>
+            <button class="quit-btn" style="margin:0; padding:5px 10px;" onclick="location.reload()">逃げる</button>
+            <div style="width:40%; text-align:right;">ENEMY<div class="hp-bar">
+                    <div id="e-hp" class="hp-fill"></div>
                 </div>
             </div>
         </div>
-
-        <div id="result-screen" class="overlay-screen hidden">
-            <h1 id="res-title"></h1>
-            <p id="res-msg"></p>
-            <button class="quit-btn" onclick="location.reload()">TOPへ</button>
+        <div id="battle-stage">
+            <div id="slash"></div>
+            <div id="enemy-samurai"></div>
         </div>
+        <div class="ui-mid">
+            <div id="timer-gauge">
+                <div id="timer-fill"></div>
+            </div>
+            <div id="event-name">出陣</div>
+            <div id="hint-text">💡 ヒント</div>
+            <div id="input-display">____</div>
+        </div>
+        <div class="keypad">
+            <button class="key" onclick="tapNum(1)">1</button><button class="key" onclick="tapNum(2)">2</button><button
+                class="key" onclick="tapNum(3)">3</button>
+            <button class="key" onclick="tapNum(4)">4</button><button class="key" onclick="tapNum(5)">5</button><button
+                class="key" onclick="tapNum(6)">6</button>
+            <button class="key" onclick="tapNum(7)">7</button><button class="key" onclick="tapNum(8)">8</button><button
+                class="key" onclick="tapNum(9)">9</button>
+            <button class="key" onclick="tapClear()">C</button><button class="key" onclick="tapNum(0)">0</button><button
+                class="key ok" onclick="tapOk()">斬</button>
+        </div>
+    </div>
+
+    <div id="flash-ui" class="overlay-screen hidden">
+        <div id="fc-card" onclick="nextFcStep()"
+            style="width:90%; height:60%; background:#fff; color:#000; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
+            <h1 id="fc-year" style="font-size:4rem; margin:0;">----</h1>
+            <h2 id="fc-goro" class="hidden" style="color:#b71c1c;">ゴロ</h2>
+            <div id="fc-event" class="hidden" style="font-size:1.5rem; font-weight:bold;">出来事</div>
+            <div style="margin-top:auto; font-size:0.8rem; color:#888;">タップで進む</div>
+        </div>
+        <div id="fc-actions" class="hidden"
+            style="margin-top:20px; width:90%; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+            <button class="select-btn" style="background:#4caf50;" onclick="rateCard('memo')">覚えた</button>
+            <button class="select-btn" style="background:#2196f3;" onclick="rateCard('normal')">普通</button>
+            <button class="select-btn" style="background:#f44336;" onclick="rateCard('weak')">苦手</button>
+        </div>
+        <button class="quit-btn" style="position:absolute; top:20px; right:20px;"
+            onclick="location.reload()">終了</button>
+    </div>
+
+    <div id="collection-ui" class="overlay-screen hidden" style="padding:0; justify-content:start;">
+        <div id="col-header">
+            <button class="quit-btn" style="margin:0;" onclick="location.reload()">戻る</button>
+            <span>宝物庫</span>
+            <span id="col-count">0/0</span>
+        </div>
+        <div id="col-grid"></div>
+    </div>
+
+    <div id="card-modal" class="hidden">
+        <h2 id="card-get-title" class="hidden"
+            style="color:#ffd700; text-shadow:0 0 10px #ff0000; font-size:2.5rem; margin-bottom:20px; z-index:210;">
+            お宝発見！</h2>
+        <div id="card-view-node"></div>
+        <button id="modal-close-btn" class="quit-btn" onclick="closeCardModal()">閉じる</button>
+        <p style="color:#fff; margin-top:10px; font-size:0.8rem; z-index:210;">カードをタップで裏返す</p>
+        <div id="modal-bg-trigger" onclick="closeCardModal()"></div>
+    </div>
+
+    <div id="sort-ui" class="overlay-screen hidden">
+        <div id="sort-header">
+            <button class="quit-btn" style="margin:0;" onclick="location.reload()">中断</button>
+            <span>時代を並べ替えよ</span>
+            <button class="quit-btn" style="margin:0;" onclick="checkSortOrder()">判定</button>
+        </div>
+        <div id="sort-container"></div>
+    </div>
+
+    <div id="analysis-ui" class="overlay-screen hidden">
+        <div
+            style="width:100%; display:flex; justify-content:space-between; margin-bottom:20px; max-width: var(--menu-width);">
+            <h2>戦績分析</h2>
+            <button class="quit-btn" style="margin:0;" onclick="location.reload()">閉じる</button>
+        </div>
+        <div id="analysis-container" class="analysis-content"></div>
+        <div class="analysis-content" style="margin-top:20px;">
+            <div class="data-box">
+                <p style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">データ引継ぎ</p>
+                <textarea id="export-area" readonly onclick="this.select()"></textarea>
+                <button class="select-btn" style="margin-top:5px; padding:8px; font-size:0.9rem;"
+                    onclick="copyData()">コードをコピー</button>
+            </div>
+            <div class="data-box">
+                <p style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">データ復元</p>
+                <textarea id="import-area" placeholder="ここにコードを貼り付け"></textarea>
+                <button class="select-btn"
+                    style="margin-top:5px; padding:8px; font-size:0.9rem; border-color:var(--accent); color:var(--accent);"
+                    onclick="importData()">データを復元</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="overlay-screen hidden">
+        <h1 id="res-title"></h1>
+        <p id="res-msg"></p>
+        <button class="quit-btn" onclick="location.reload()">TOPへ</button>
+    </div>
 
     </div>
+
+    <!-- Audio Elements -->
+    <audio id="bgm-main" src="./assets/audio/bgm_main.mp3" loop></audio>
+    <audio id="se-decision" src="./assets/audio/se_decision.mp3"></audio>
+    <audio id="se-cancel" src="./assets/audio/se_cancel.mp3"></audio>
+    <audio id="se-slash" src="./assets/audio/se_slash.mp3"></audio>
+    <audio id="se-battle" src="./assets/audio/se_battle.mp3"></audio>
 
     <script src="questions.js"></script>
     <script src="cards.js"></script>
@@ -1375,59 +1597,73 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(userStats));
         }
 
+        // Audio Context (Keep for compatibility)
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
-        function playTone(type, freq, dur) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type; osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + dur);
-        }
-        function playSound(type) {
-            if (type === 'key') {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.05);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-            }
-            if (type === 'slash') {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-            }
-            if (type === 'damage') { playTone('square', 100, 0.3); }
-            if (type === 'ok') {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(2000, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+
+        let isBgmPlaying = false;
+        let isBgmEnabled = true; // User preference toggle
+        let inBattle = false; // Track battle state
+
+        function playBgm() {
+            if (isBgmEnabled && inBattle && !isBgmPlaying) {
+                const bgm = document.getElementById('bgm-main');
+                if (bgm && bgm.paused) {
+                    bgm.volume = 0.3;
+                    bgm.play().then(() => {
+                        isBgmPlaying = true;
+                        document.getElementById('bgm-toggle-btn').innerText = '🎵 BGM: ON';
+                    }).catch(e => console.log("BGM play failed:", e));
+                }
             }
         }
 
-        let mode = '', selectedEra = '', playerHp = 100, enemyHp = 100, currentIdx = 0, quizList = [], userInput = "", timerInterval;
+        function stopBgm() {
+            const bgm = document.getElementById('bgm-main');
+            if (bgm && !bgm.paused) {
+                bgm.pause();
+                isBgmPlaying = false;
+            }
+        }
+
+        function toggleBgm() {
+            const btn = document.getElementById('bgm-toggle-btn');
+            if (isBgmEnabled) {
+                // Turn off
+                isBgmEnabled = false;
+                stopBgm();
+                btn.innerText = '🎵 BGM: OFF';
+            } else {
+                // Turn on
+                isBgmEnabled = true;
+                btn.innerText = '🎵 BGM: ON';
+                if (inBattle) playBgm();
+            }
+        }
+
+        function playSound(type) {
+            // Start BGM on first interaction as fallback
+            if (inBattle) playBgm();
+
+            const audioMap = {
+                'key': 'se-decision',
+                'ok': 'se-battle',
+                'cancel': 'se-cancel',
+                'damage': 'se-cancel',
+                'slash': 'se-slash'
+            };
+
+            const id = audioMap[type];
+            if (id) {
+                const audio = document.getElementById(id);
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log("SE play failed:", e));
+                }
+            }
+        }
+
+        let mode = '', selectedEra = '', selectedStars = 0, playerHp = 100, enemyHp = 100, currentIdx = 0, quizList = [], userInput = "", timerInterval;
         let isProcessing = false;
 
         function selectMode(m) {
@@ -1442,9 +1678,20 @@
         function selectEra(era) {
             selectedEra = era;
             document.getElementById('era-screen').classList.add('hidden');
+            document.getElementById('star-screen').classList.remove('hidden');
+        }
+
+        function selectStar(stars) {
+            selectedStars = stars;
+            document.getElementById('star-screen').classList.add('hidden');
+
             if (mode === 'battle') {
                 let data = (typeof masterData !== 'undefined') ? masterData : [];
-                const weakCount = data.filter(q => (era === 'all' || q.era === era) && getStat(q.id).w > 0).length;
+                const weakCount = data.filter(q =>
+                    (selectedEra === 'all' || q.era === selectedEra) &&
+                    (selectedStars === 0 || q.stars === selectedStars) &&
+                    getStat(q.id).w > 0
+                ).length;
                 const badge = document.getElementById('weak-badge');
                 badge.innerText = weakCount;
                 badge.style.display = weakCount > 0 ? 'inline-block' : 'none';
@@ -1454,10 +1701,15 @@
         }
 
         function startBattle(type) {
+            inBattle = true;
+            playBgm();
             document.getElementById('diff-screen').classList.add('hidden');
             document.getElementById('game-ui').classList.remove('hidden');
             let data = (typeof masterData !== 'undefined') ? masterData : [];
-            let baseList = data.filter(q => (selectedEra === 'all' || q.era === selectedEra));
+            let baseList = data.filter(q =>
+                (selectedEra === 'all' || q.era === selectedEra) &&
+                (selectedStars === 0 || q.stars === selectedStars)
+            );
             if (type === 'weak') {
                 quizList = baseList.filter(q => getStat(q.id).w > 0 && getStat(q.id).s < 3);
                 if (quizList.length === 0) { alert("苦手の記録がありません！"); location.reload(); return; }
@@ -1512,6 +1764,8 @@
         }
 
         function endGame() {
+            inBattle = false;
+            stopBgm();
             document.getElementById('game-ui').classList.add('hidden');
             const win = enemyHp <= 0;
             document.getElementById('result-screen').classList.remove('hidden');
@@ -1617,7 +1871,10 @@
         function startFlash() {
             document.getElementById('flash-ui').classList.remove('hidden');
             let data = (typeof masterData !== 'undefined') ? masterData : [];
-            quizList = data.filter(q => (selectedEra === 'all' || q.era === selectedEra)).slice(0, 10);
+            quizList = data.filter(q =>
+                (selectedEra === 'all' || q.era === selectedEra) &&
+                (selectedStars === 0 || q.stars === selectedStars)
+            ).sort(() => Math.random() - 0.5); // Shuffle for flashcards too
             currentIdx = 0; showFc();
         }
         function showFc() {
@@ -1645,49 +1902,65 @@
             const shuffled = [...correctOrder].sort(() => Math.random() - 0.5);
             shuffled.forEach(era => {
                 const d = document.createElement('div'); d.className = 'sort-item'; d.innerText = era;
-                d.addEventListener('touchstart', handleTouchStart, { passive: false });
-                d.addEventListener('touchmove', handleTouchMove, { passive: false });
-                d.addEventListener('touchend', handleTouchEnd);
+                d.addEventListener('touchstart', handlePointerDown, { passive: false });
+                d.addEventListener('mousedown', handlePointerDown, { passive: false });
                 c.appendChild(d);
             });
+
+            // Global listeners for smooth dragging out of item bounds
+            document.addEventListener('touchmove', handlePointerMove, { passive: false });
+            document.addEventListener('mousemove', handlePointerMove, { passive: false });
+            document.addEventListener('touchend', handlePointerEnd);
+            document.addEventListener('mouseup', handlePointerEnd);
         }
 
-        function handleTouchStart(e) {
+        function getClientPos(e) {
+            // Unify touch and mouse coordinates
+            if (e.touches && e.touches.length > 0) {
+                return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+            } else if (e.changedTouches && e.changedTouches.length > 0) {
+                return { clientX: e.changedTouches[0].clientX, clientY: e.changedTouches[0].clientY };
+            } else {
+                return { clientX: e.clientX, clientY: e.clientY };
+            }
+        }
+
+        function handlePointerDown(e) {
             const target = e.target;
             pressTimer = setTimeout(() => {
-                isDragging = true; dragSrcEl = target; initiateDrag(e.touches[0]);
-            }, 300);
+                isDragging = true; dragSrcEl = target; initiateDrag(getClientPos(e));
+            }, 100);
         }
 
-        function initiateDrag(touch) {
+        function initiateDrag(pos) {
             if (!dragSrcEl) return;
             if (navigator.vibrate) navigator.vibrate(20);
             ghost = dragSrcEl.cloneNode(true); ghost.className = 'drag-ghost'; document.body.appendChild(ghost);
-            moveGhost(touch);
+            moveGhost(pos);
             placeholder = document.createElement('div'); placeholder.className = 'sort-placeholder';
             dragSrcEl.parentNode.insertBefore(placeholder, dragSrcEl.nextSibling);
             dragSrcEl.style.display = 'none';
         }
 
-        function handleTouchMove(e) {
+        function handlePointerMove(e) {
             if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
             if (!isDragging) return;
-            e.preventDefault(); const touch = e.touches[0]; moveGhost(touch);
+            e.preventDefault(); const pos = getClientPos(e); moveGhost(pos);
             const container = document.getElementById('sort-container');
             const rect = container.getBoundingClientRect();
-            if (touch.clientY < rect.top + 80) container.scrollTop -= 10;
-            else if (touch.clientY > rect.bottom - 80) container.scrollTop += 10;
+            if (pos.clientY < rect.top + 80) container.scrollTop -= 10;
+            else if (pos.clientY > rect.bottom - 80) container.scrollTop += 10;
 
-            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            let element = document.elementFromPoint(pos.clientX, pos.clientY);
             if (element && element.classList.contains('sort-item') && element !== dragSrcEl) {
                 const bounding = element.getBoundingClientRect();
                 const offset = bounding.y + (bounding.height / 2);
-                if (touch.clientY - offset > 0) container.insertBefore(placeholder, element.nextSibling);
+                if (pos.clientY - offset > 0) container.insertBefore(placeholder, element.nextSibling);
                 else container.insertBefore(placeholder, element);
             }
         }
 
-        function handleTouchEnd(e) {
+        function handlePointerEnd(e) {
             if (pressTimer) clearTimeout(pressTimer);
             if (isDragging) {
                 isDragging = false;
@@ -1700,7 +1973,7 @@
                 playSound('damage');
             }
         }
-        function moveGhost(touch) { if (ghost) { ghost.style.left = (touch.clientX - 20) + 'px'; ghost.style.top = (touch.clientY - 20) + 'px'; } }
+        function moveGhost(pos) { if (ghost) { ghost.style.left = (pos.clientX - 20) + 'px'; ghost.style.top = (pos.clientY - 20) + 'px'; } }
         function checkSortOrder() {
             const items = document.querySelectorAll('.sort-item'); let correctCount = 0;
             items.forEach((item, index) => {
