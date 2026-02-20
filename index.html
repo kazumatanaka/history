@@ -522,12 +522,14 @@
             padding: 10px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-auto-rows: max-content;
+            gap: 15px 10px;
             align-content: start;
         }
 
         .col-card {
             aspect-ratio: 2/3;
+            min-height: 130px;
             background: #fff;
             border: 3px solid #555;
             border-radius: 8px;
