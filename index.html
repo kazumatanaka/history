@@ -124,7 +124,7 @@
             flex-direction: column;
             gap: 10px;
             overflow-y: auto;
-            padding: 20px 10px;
+            padding: 5px 10px;
             max-height: 80vh;
         }
 
@@ -285,11 +285,12 @@
 
         /* ゲーム画面 */
         .status-bar {
-            flex: 0 0 80px;
+            flex: 0 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
+            padding: 40px 20px 10px 20px;
+            /* Added top padding to clear absolute toggles */
             background: rgba(255, 255, 255, 0.9);
             border-bottom: 4px dashed var(--primary-glow);
             color: var(--primary);
@@ -331,8 +332,8 @@
         }
 
         #enemy-samurai {
-            width: 280px;
-            height: 280px;
+            width: 200px;
+            height: 200px;
             background: url('./assets/images/enemy_samurai_pop.png') no-repeat bottom center;
             background-size: contain;
             animation: sway 2s ease-in-out infinite;
@@ -1494,7 +1495,7 @@
         </div>
         <div id="mode-screen" class="overlay-screen">
             <img src="./assets/images/logo_pop_kabuto.png" alt="歴史無双"
-                style="width: 70%; max-width: 300px; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(255, 64, 129, 0.4));" />
+                style="width: 60%; max-width: 250px; margin-top: -20px; margin-bottom: 0px; filter: drop-shadow(0 4px 6px rgba(255, 64, 129, 0.4));" />
             <div class="menu-list">
                 <button class="slash-btn" onclick="selectMode('battle')">
                     <div>
@@ -1576,6 +1577,8 @@
                     </div>
                 </button>
             </div>
+            <button class="quit-btn"
+                onclick="playSound('click'); document.getElementById('era-screen').classList.add('hidden'); document.getElementById('mode-screen').classList.remove('hidden');">戻る</button>
         </div>
 
         <div id="star-screen" class="overlay-screen hidden">
