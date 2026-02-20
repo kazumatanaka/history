@@ -1043,15 +1043,23 @@
         .stat-pill {
             background: #333;
             border: 2px solid #fff;
-            border-radius: 15px;
-            padding: 2px 8px;
+            border-radius: 8px;
+            padding: 4px 6px;
             font-family: var(--font-game);
             font-weight: bold;
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            min-width: 80px;
+        }
+
+        .stat-val {
+            font-size: 1.1rem;
+            margin-top: 3px;
+            line-height: 1;
         }
 
         .stat-pill.str {
@@ -2098,7 +2106,7 @@
                                 <img src="${card.img}" class="card-char-img" style="${isItem ? 'width:70%; bottom:110px;' : ''}">
                                 <div class="card-no">No.${card.id.substring(1)}</div>
                                 <div class="card-bottom">
-                                    ${!isItem ? `<div class="stats-row"><span class="stat-pill str">⚔️つよさ ${s.str}</span><span class="stat-pill int">🧠かしこさ ${s.int}</span><span class="stat-pill cha">💗にんき ${s.cha}</span></div>` : ''}
+                                    ${!isItem ? `<div class="stats-row"><div class="stat-pill str"><div>⚔️つよさ</div><div class="stat-val">${s.str}</div></div><div class="stat-pill int"><div>🧠かしこさ</div><div class="stat-val">${s.int}</div></div><div class="stat-pill cha"><div>💗にんき</div><div class="stat-val">${s.cha}</div></div></div>` : ''}
                                     <div class="desc-box" style="${isItem ? 'margin-top:5px; height:75px;' : ''}">${card.desc}</div>
                                 </div>
                             </div>
