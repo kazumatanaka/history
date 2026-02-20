@@ -1841,7 +1841,7 @@
     </div>
 
     <!-- Audio Elements -->
-    <audio id="bgm-main" src="./assets/audio/bgm_main.mp3" loop></audio>
+    <audio id="bgm-main" src="./assets/audio/newbgm.m4a" loop></audio>
     <audio id="se-decision" src="./assets/audio/se_decision.mp3"></audio>
     <audio id="se-cancel" src="./assets/audio/se_cancel.mp3"></audio>
     <audio id="se-slash" src="./assets/audio/se_slash.mp3"></audio>
@@ -1880,6 +1880,23 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (!isBgmEnabled) document.getElementById('bgm-toggle-btn').classList.add('gray-out');
             if (!isSeEnabled) document.getElementById('se-toggle-btn').classList.add('gray-out');
+
+            // Handle page visibility changes (Android/iOS backgrounding)
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // Pause audio when app is in background
+                    const bgm = document.getElementById('bgm-main');
+                    if (bgm && !bgm.paused) {
+                        bgm.pause();
+                        isBgmPlaying = false; // Intentionally set to allow resume
+                    }
+                } else {
+                    // Resume audio when returning, if supposed to be playing
+                    if (isBgmEnabled && inBattle) {
+                        playBgm();
+                    }
+                }
+            });
         });
 
         function playBgm() {
