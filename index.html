@@ -122,7 +122,7 @@
             max-width: var(--menu-width);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 10px;
             overflow-y: auto;
             padding: 20px 10px;
             max-height: 80vh;
@@ -133,8 +133,8 @@
             position: relative;
             background: #fff;
             border: 4px solid var(--primary);
-            border-radius: 16px;
-            padding: 18px 24px;
+            border-radius: 12px;
+            padding: 12px 20px;
             text-align: left;
             color: var(--text-main);
             font-family: var(--font-main);
@@ -178,15 +178,15 @@
         }
 
         .btn-title {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 900;
         }
 
         .btn-sub {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #ff80ab;
             text-transform: uppercase;
-            margin-top: 4px;
+            margin-top: 2px;
             font-weight: bold;
             letter-spacing: 0.05em;
         }
@@ -226,6 +226,61 @@
         .quit-btn:active {
             transform: translateY(4px);
             box-shadow: 0 0 0 #FF8F00;
+        }
+
+        .quit-btn.gray-out {
+            background: #e0e0e0 !important;
+            border-color: #9e9e9e !important;
+            color: #757575 !important;
+            box-shadow: 0 4px 0 #9e9e9e !important;
+        }
+
+        .quit-btn.gray-out:hover {
+            background: #f5f5f5 !important;
+            box-shadow: 0 2px 0 #9e9e9e !important;
+        }
+
+        .quit-btn.gray-out:active {
+            box-shadow: 0 0 0 #9e9e9e !important;
+        }
+
+        /* Flash Card Action Buttons */
+        .fc-btn {
+            padding: 12px;
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 0;
+            border-width: 3px;
+        }
+
+        .memo-btn {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            border-color: #1b5e20;
+            box-shadow: 0 4px 0 #1b5e20;
+        }
+
+        .memo-btn:active {
+            box-shadow: 0 0 0 #1b5e20;
+        }
+
+        .norm-btn {
+            background: linear-gradient(135deg, #2196f3, #1565c0);
+            border-color: #0d47a1;
+            box-shadow: 0 4px 0 #0d47a1;
+        }
+
+        .norm-btn:active {
+            box-shadow: 0 0 0 #0d47a1;
+        }
+
+        .weak-btn {
+            background: linear-gradient(135deg, #f44336, #c62828);
+            border-color: #b71c1c;
+            box-shadow: 0 4px 0 #b71c1c;
+        }
+
+        .weak-btn:active {
+            box-shadow: 0 0 0 #b71c1c;
         }
 
         /* ゲーム画面 */
@@ -1431,12 +1486,15 @@
 <body>
 
     <div id="main-wrapper">
-        <button id="bgm-toggle-btn" class="quit-btn"
-            style="position: absolute; top: 10px; right: 10px; z-index: 500; margin: 0; padding: 5px 10px; font-size: 0.8rem;"
-            onclick="toggleBgm()">🎵 BGM: ON</button>
+        <div style="position: absolute; top: 10px; right: 10px; z-index: 500; display: flex; gap: 5px;">
+            <button id="se-toggle-btn" class="quit-btn" style="margin: 0; padding: 5px 10px; font-size: 0.8rem;"
+                onclick="toggleSe()">🔊 効果音</button>
+            <button id="bgm-toggle-btn" class="quit-btn" style="margin: 0; padding: 5px 10px; font-size: 0.8rem;"
+                onclick="toggleBgm()">🎵 BGM</button>
+        </div>
         <div id="mode-screen" class="overlay-screen">
             <img src="./assets/images/logo_pop_kabuto.png" alt="歴史無双"
-                style="width: 80%; max-width: 400px; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(255, 64, 129, 0.4));" />
+                style="width: 70%; max-width: 300px; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(255, 64, 129, 0.4));" />
             <div class="menu-list">
                 <button class="slash-btn" onclick="selectMode('battle')">
                     <div>
@@ -1518,8 +1576,6 @@
                     </div>
                 </button>
             </div>
-            <button class="quit-btn"
-                onclick="playSound('click'); document.getElementById('era-screen').classList.add('hidden'); document.getElementById('mode-screen').classList.remove('hidden');">戻る</button>
         </div>
 
         <div id="star-screen" class="overlay-screen hidden">
@@ -1626,9 +1682,9 @@
             </div>
             <div id="fc-actions" class="hidden"
                 style="margin-top:20px; width:90%; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
-                <button class="select-btn" style="background:#4caf50;" onclick="rateCard('memo')">覚えた</button>
-                <button class="select-btn" style="background:#2196f3;" onclick="rateCard('normal')">普通</button>
-                <button class="select-btn" style="background:#f44336;" onclick="rateCard('weak')">苦手</button>
+                <button class="select-btn fc-btn memo-btn" onclick="rateCard('memo')">覚えた</button>
+                <button class="select-btn fc-btn norm-btn" onclick="rateCard('normal')">普通</button>
+                <button class="select-btn fc-btn weak-btn" onclick="rateCard('weak')">苦手</button>
             </div>
             <button class="quit-btn" style="position:absolute; top:20px; right:20px;"
                 onclick="playClickAndReload()">終了</button>
@@ -1722,9 +1778,19 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
+        const SETTINGS_KEY = 'history_game_settings_v1';
+        let userSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || { bgm: true, se: true };
+
         let isBgmPlaying = false;
-        let isBgmEnabled = true; // User preference toggle
+        let isBgmEnabled = userSettings.bgm; // User preference toggle
+        let isSeEnabled = userSettings.se;  // SE toggle
         let inBattle = false; // Track battle state
+
+        // Initialize UI buttons on load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!isBgmEnabled) document.getElementById('bgm-toggle-btn').classList.add('gray-out');
+            if (!isSeEnabled) document.getElementById('se-toggle-btn').classList.add('gray-out');
+        });
 
         function playBgm() {
             if (isBgmEnabled && inBattle && !isBgmPlaying) {
@@ -1733,7 +1799,6 @@
                     bgm.volume = 0.3;
                     bgm.play().then(() => {
                         isBgmPlaying = true;
-                        document.getElementById('bgm-toggle-btn').innerText = '🎵 BGM: ON';
                     }).catch(e => console.log("BGM play failed:", e));
                 }
             }
@@ -1748,23 +1813,42 @@
         }
 
         function toggleBgm() {
+            playSound('click');
             const btn = document.getElementById('bgm-toggle-btn');
             if (isBgmEnabled) {
                 // Turn off
                 isBgmEnabled = false;
                 stopBgm();
-                btn.innerText = '🎵 BGM: OFF';
+                btn.classList.add('gray-out');
             } else {
                 // Turn on
                 isBgmEnabled = true;
-                btn.innerText = '🎵 BGM: ON';
+                btn.classList.remove('gray-out');
                 if (inBattle) playBgm();
             }
+            userSettings.bgm = isBgmEnabled;
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
+        }
+
+        function toggleSe() {
+            playSound('click');
+            const btn = document.getElementById('se-toggle-btn');
+            if (isSeEnabled) {
+                isSeEnabled = false;
+                btn.classList.add('gray-out');
+            } else {
+                isSeEnabled = true;
+                btn.classList.remove('gray-out');
+            }
+            userSettings.se = isSeEnabled;
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
         }
 
         function playSound(type) {
             // Start BGM on first interaction as fallback
             if (inBattle) playBgm();
+
+            if (!isSeEnabled) return;
 
             const audioMap = {
                 'key': 'se-decision',
@@ -1898,7 +1982,8 @@
             inBattle = false;
             stopBgm();
             document.getElementById('game-ui').classList.add('hidden');
-            const win = enemyHp <= 0;
+            // Make it a win if enemy HP <= 0 OR if we ran out of questions and player HP > enemy HP
+            const win = enemyHp <= 0 || (currentIdx >= quizList.length && playerHp > enemyHp);
             document.getElementById('result-screen').classList.remove('hidden');
             document.getElementById('res-title').innerText = win ? "勝利" : "敗北";
             document.getElementById('res-msg').innerText = win ? "歴史の闇を切り裂いた！" : "修行して出直せ。";
@@ -2018,11 +2103,12 @@
             document.getElementById('fc-actions').classList.add('hidden');
         }
         function nextFcStep() {
+            playSound('click');
             fcStep++;
             if (fcStep === 1) document.getElementById('fc-goro').classList.remove('hidden');
             if (fcStep === 2) { document.getElementById('fc-event').classList.remove('hidden'); document.getElementById('fc-actions').classList.remove('hidden'); }
         }
-        function rateCard(r) { playSound('ok'); currentIdx++; showFc(); }
+        function rateCard(r) { playSound('click'); currentIdx++; showFc(); }
 
         // --- 整列ゲーム ---
         const correctOrder = ["弥生", "古墳", "飛鳥", "奈良", "平安", "鎌倉", "室町", "安土桃山", "江戸", "明治", "大正", "昭和", "平成", "令和"];
