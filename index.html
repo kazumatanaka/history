@@ -397,8 +397,8 @@
             position: relative;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
-            margin-top: -10px;
-            /* Pull UI up */
+            margin-top: -30px;
+            /* Pull UI up further */
         }
 
         #timer-gauge {
@@ -449,8 +449,8 @@
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 15px;
+            gap: 8px;
+            padding: 10px;
             background: #fff3e0;
         }
 
@@ -459,7 +459,11 @@
             color: var(--primary);
             border: 3px solid #ffcc80;
             border-radius: 12px;
-            padding: 15px;
+            padding: 11px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.8rem;
             font-weight: 900;
             font-family: var(--font-main);
@@ -1533,8 +1537,6 @@
                     <div class="btn-icon">📊</div>
                 </button>
             </div>
-            <button class="quit-btn"
-                onclick="playSound('click'); document.getElementById('diff-screen').classList.add('hidden'); document.getElementById('star-screen').classList.remove('hidden');">戻る</button>
         </div>
 
         <div id="era-screen" class="overlay-screen hidden">
@@ -1577,7 +1579,7 @@
                     </div>
                 </button>
             </div>
-            <button class="quit-btn"
+            <button id="era-back-btn" class="quit-btn hidden"
                 onclick="playSound('click'); document.getElementById('era-screen').classList.add('hidden'); document.getElementById('mode-screen').classList.remove('hidden');">戻る</button>
         </div>
 
@@ -1882,7 +1884,12 @@
             if (m === 'collection') showCollection();
             else if (m === 'sort') startSortGame();
             else if (m === 'analysis') showAnalysis();
-            else document.getElementById('era-screen').classList.remove('hidden');
+            else {
+                // Determine if we should show the back button on Era screen
+                // Only show it if we are entering from mode selection
+                document.getElementById('era-back-btn').classList.remove('hidden');
+                document.getElementById('era-screen').classList.remove('hidden');
+            }
         }
 
         function selectEra(era) {
@@ -2098,7 +2105,13 @@
             currentIdx = 0; showFc();
         }
         function showFc() {
-            if (currentIdx >= quizList.length) { alert('終了'); location.reload(); return; }
+            if (currentIdx >= quizList.length) {
+                alert('終了');
+                document.getElementById('flash-ui').classList.add('hidden');
+                document.getElementById('era-back-btn').classList.add('hidden');
+                document.getElementById('era-screen').classList.remove('hidden');
+                return;
+            }
             fcStep = 0;
             document.getElementById('fc-year').innerText = quizList[currentIdx].y;
             document.getElementById('fc-goro').classList.add('hidden'); document.getElementById('fc-goro').innerText = quizList[currentIdx].h;
