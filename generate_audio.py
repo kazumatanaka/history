@@ -16,7 +16,7 @@ def generate_tone(filename, frequency=440, duration=1.0, volume=0.5):
         for i in range(n_samples):
             t = float(i) / sample_rate
             # Simple fade out
-            env = max(0, 1.0 - t/duration)
+            env = max(0.0, 1.0 - t/duration)
             value = int(volume * env * 32767.0 * math.sin(2.0 * math.pi * frequency * t))
             data.append(struct.pack('<h', value))
             
@@ -73,7 +73,7 @@ def generate_bgm(filename, duration=16.0, volume=0.4):
             
             # Envelope per note (plucky, staccato sound)
             t_in_note = t % step_duration
-            env = max(0, 1.0 - (t_in_note / (step_duration * 0.8)))
+            env = max(0.0, 1.0 - (t_in_note / (step_duration * 0.8)))
             
             # Simple soft synth tone (sine + octave sine harmonic)
             val = math.sin(2.0 * math.pi * freq * t_in_note) + (0.5 * math.sin(2.0 * math.pi * freq * 2 * t_in_note))
@@ -104,7 +104,7 @@ def generate_chime(filename, duration=1.2, volume=0.5):
             env = math.exp(-3.0 * t) 
             
             # Mix the frequencies
-            val = 0
+            val = 0.0
             for (idx, freq) in enumerate(freqs):
                 # stagger the start of each note slightly for a glissando effect
                 delay = idx * 0.05
@@ -113,11 +113,35 @@ def generate_chime(filename, duration=1.2, volume=0.5):
                     note_env = math.exp(-4.0 * note_t)
                     val += math.sin(2.0 * math.pi * freq * note_t) * note_env
             
-            val = val / len(freqs) * 2.0 # Normalize and boost
+            val = val / float(len(freqs)) * 2.0 # Normalize and boost
             
             value = int(volume * env * 32767.0 * val)
             # Clip
             value = max(-32768, min(32767, value))
+            data.append(struct.pack('<h', value))
+            
+        wav_file.writeframes(b''.join(data))
+
+def generate_click(filename, duration=0.03, volume=0.5):
+    import random
+    sample_rate = 44100
+    n_samples = int(sample_rate * duration)
+    
+    with wave.open(filename, 'w') as wav_file:
+        wav_file.setnchannels(1)
+        wav_file.setsampwidth(2)
+        wav_file.setframerate(sample_rate)
+        
+        data = []
+        for i in range(n_samples):
+            t = float(i) / sample_rate
+            # Very sharp envelope for a "tick" noise burst (mechanical switch)
+            env = math.exp(-150.0 * t) 
+            
+            # mechanical click is mostly high-frequency noise and a fast transient
+            val = (random.random() * 2.0 - 1.0) * env
+            
+            value = int(volume * val * 32767.0)
             data.append(struct.pack('<h', value))
             
         wav_file.writeframes(b''.join(data))
@@ -131,3 +155,4 @@ generate_tone('assets/audio/se_cancel.mp3', 440, 0.1, 0.5) # Low beep
 generate_noise('assets/audio/se_slash.mp3', 0.2, 0.6) # Noise for slash
 # 'se_battle' is actually mapped to the 'ok' / get card sound in JS
 generate_chime('assets/audio/se_battle.mp3', 1.5, 0.7) # Bright exciting chime
+generate_click('assets/audio/se_click.mp3', 0.05, 0.3) # Soft UI click
