@@ -587,6 +587,20 @@
             font-weight: bold;
         }
 
+        .col-card-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e91e63;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
         .col-card-name {
             font-size: 0.8rem;
             font-weight: 900;
@@ -668,6 +682,7 @@
             border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
             overflow: hidden;
+            box-sizing: border-box;
         }
 
         /* --- 表面デザイン --- */
@@ -1016,9 +1031,13 @@
 
         .stats-row {
             display: flex;
-            justify-content: space-around;
+            width: fit-content;
+            align-self: center;
+            justify-content: center;
+            gap: 6px;
             align-items: center;
             margin-top: -15px;
+            flex-wrap: nowrap;
         }
 
         .stat-pill {
@@ -1071,7 +1090,6 @@
             display: flex;
             flex-direction: column;
             font-family: var(--font-game);
-            position: relative;
         }
 
         /* 四隅の飾り (疑似要素で再現) */
@@ -1499,7 +1517,7 @@
         </div>
         <div id="mode-screen" class="overlay-screen">
             <img src="./assets/images/logo_pop_kabuto.png" alt="歴史無双"
-                style="width: 60%; max-width: 250px; margin-top: -20px; margin-bottom: 0px; filter: drop-shadow(0 4px 6px rgba(255, 64, 129, 0.4));" />
+                style="width: 60%; max-width: 250px; margin-top: -20px; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(255, 64, 129, 0.4));" />
             <div class="menu-list">
                 <button class="slash-btn" onclick="selectMode('battle')">
                     <div>
@@ -1753,6 +1771,13 @@
             <button class="quit-btn" onclick="playClickAndReload()">TOPへ</button>
         </div>
 
+        <div id="fc-result-screen" class="overlay-screen hidden">
+            <h1 style="font-size: 2.5rem; margin-bottom: 10px; color: var(--primary);">特訓完了</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 30px;">すべてのカードを確認しました。</p>
+            <button class="quit-btn"
+                onclick="playSound('click'); document.getElementById('fc-result-screen').classList.add('hidden'); document.getElementById('era-back-btn').classList.remove('hidden'); document.getElementById('era-screen').classList.remove('hidden');">閉じる</button>
+        </div>
+
     </div>
 
     <!-- Audio Elements -->
@@ -1949,7 +1974,7 @@
             if (playerHp <= 0 || enemyHp <= 0 || currentIdx >= quizList.length) { endGame(); return; }
             isProcessing = false;
             userInput = ""; document.getElementById('input-display').innerText = "____";
-            document.getElementById('input-display').style.color = "#fff";
+            document.getElementById('input-display').style.color = "";
             document.getElementById('event-name').innerText = quizList[currentIdx].e;
             const hint = document.getElementById('hint-text');
             hint.innerText = quizList[currentIdx].h || "ヒントなし"; hint.style.opacity = 0;
@@ -2015,7 +2040,8 @@
 
                     const drop = pool[Math.floor(Math.random() * pool.length)];
                     const isNew = !userCards.includes(drop.id);
-                    if (isNew) { userCards.push(drop.id); localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards)); }
+                    userCards.push(drop.id);
+                    localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(userCards));
                     setTimeout(() => openCardModal(drop, isNew), 500);
                 }
             }
@@ -2028,11 +2054,13 @@
             let cData = (typeof cardData !== 'undefined') ? [...cardData] : [];
             cData.sort((a, b) => parseInt(a.id.substring(1)) - parseInt(b.id.substring(1)));
             cData.forEach(c => {
-                const owned = userCards.includes(c.id);
+                const count = userCards.filter(id => id === c.id).length;
+                const owned = count > 0;
                 const el = document.createElement('div');
                 el.className = `col-card ${owned ? 'r' + c.rarity : ''}`;
                 el.innerHTML = `
                     <div class="col-card-num">No.${c.id.substring(1)}</div>
+                    ${count > 1 ? `<div class="col-card-badge">x${count}</div>` : ''}
                     <div style="width:100%; flex:1; display:flex; justify-content:center; align-items:center; background:#fff; margin:2px 0; border-radius:2px; overflow:hidden;">
                         ${owned ? `<img src="${c.img}" style="width:100%;height:100%;object-fit:cover;">` : '<span style="color:#000;font-size:1.5rem;">?</span>'}
                     </div>
@@ -2041,7 +2069,8 @@
                 el.onclick = () => { if (owned) openCardModal(c, false); };
                 grid.appendChild(el);
             });
-            document.getElementById('col-count').innerText = `${userCards.length} / ${cData.length}`;
+            const uniqueOwned = new Set(userCards).size;
+            document.getElementById('col-count').innerText = `${uniqueOwned} / ${cData.length}`;
         }
 
         function openCardModal(card, isNew) {
@@ -2106,10 +2135,8 @@
         }
         function showFc() {
             if (currentIdx >= quizList.length) {
-                alert('終了');
                 document.getElementById('flash-ui').classList.add('hidden');
-                document.getElementById('era-back-btn').classList.add('hidden');
-                document.getElementById('era-screen').classList.remove('hidden');
+                document.getElementById('fc-result-screen').classList.remove('hidden');
                 return;
             }
             fcStep = 0;
