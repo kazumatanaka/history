@@ -378,7 +378,7 @@ const cardData = [
     {
         "id": "i088", "type": "item", "name": "ファミコン", "title": "ゲームブーム", "rarity": 1,
         "desc": "1983年に発売された家庭用ゲーム機。子供たちの間で大爆発的な人気となった。",
-        "img": "./assets/images/item_famicon.png", "group": "昭和", "era": "昭和（戦後）"
+        "img": "./assets/images/item_famicom.png", "group": "昭和", "era": "昭和（戦後）"
     },
     {
         "id": "i089", "type": "item", "name": "バブル", "title": "好景気", "rarity": 1,
