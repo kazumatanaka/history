@@ -335,8 +335,9 @@
         #enemy-samurai {
             width: 200px;
             height: 200px;
-            background: url('./assets/images/enemy_samurai_pop.png') no-repeat bottom center;
             background-size: contain;
+            background-repeat: no-repeat;
+            background-position: bottom center;
             animation: sway 2s ease-in-out infinite;
             filter: drop-shadow(0 0 20px rgba(255, 64, 129, 0.4));
         }
@@ -1980,6 +1981,17 @@
         let mode = '', selectedEra = '', selectedStars = 0, playerHp = 100, enemyHp = 100, currentIdx = 0, quizList = [], userInput = "", timerInterval;
         let isProcessing = false;
 
+        const enemyImages = [
+            './assets/images/enemy_samurai_pop.png',
+            './assets/images/enemy_ninja_pop.png',
+            './assets/images/enemy_shogun_pop.png'
+        ];
+
+        function setRandomEnemy() {
+            const img = enemyImages[Math.floor(Math.random() * enemyImages.length)];
+            document.getElementById('enemy-samurai').style.backgroundImage = `url('${img}')`;
+        }
+
         function selectMode(m) {
             playSound('click');
             mode = m;
@@ -2056,6 +2068,10 @@
             document.getElementById('event-name').innerText = quizList[currentIdx].e;
             const hint = document.getElementById('hint-text');
             hint.innerText = quizList[currentIdx].h || "ヒントなし"; hint.style.opacity = 0;
+
+            // Set a random enemy if it's the first question or after an enemy was defeated (we handle this mostly per question for variety or could do it per battle)
+            setRandomEnemy();
+
             currentIdx < quizList.length ? startTimer() : endGame();
         }
         function startTimer() {
